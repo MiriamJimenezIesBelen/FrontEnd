@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.simulador-page {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px 100px;
+  color: #111827;
+}
+
+.sim-hero { margin-bottom: 44px; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: #ede9fe; color: #5b21b6;
+  font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 5px 12px; border-radius: 20px; margin-bottom: 16px;
+}
+.sim-hero h1 { font-size: 2.1rem; font-weight: 800; color: #0a2e1f; margin: 0 0 10px; letter-spacing: -0.03em; }
+.sim-hero p  { color: #6b7280; font-size: 0.97rem; margin: 0; line-height: 1.6; }
+.sim-header { display: none; }
+
+.areas-label { font-size: 0.82rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+.areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 32px; }
+.area-card {
+  background: white; border: 2px solid #e5e7eb; border-radius: 18px;
+  padding: 28px 18px; text-align: center; cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 10px; font-family: inherit;
+}
+.area-card:hover { border-color: #2e8b57; transform: translateY(-3px); box-shadow: 0 12px 28px rgba(46,139,87,0.1); }
+.area-card.seleccionada { border-color: #0a2e1f; background: #f0fdf4; box-shadow: 0 0 0 3px rgba(10,46,31,0.08); }
+.area-icon { font-size: 2.2rem; }
+.area-nombre { font-size: 0.88rem; font-weight: 700; color: #111827; }
+
+.btn-generar-wrap { text-align: center; margin-bottom: 40px; }
+.btn-generar {
+  padding: 15px 40px; background: #0a2e1f; color: white;
+  border: none; border-radius: 12px; font-size: 1rem; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: 0.25s;
+}
+.btn-generar:hover { background: #1c5b39; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(10,46,31,0.2); }
+
+.plan-resultado {
+  background: white; border-radius: 22px; padding: 36px;
+  border: 1px solid #e5ede9; box-shadow: 0 10px 40px rgba(10,46,31,0.05);
+}
+.plan-titulo { display: flex; align-items: center; gap: 18px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #f3f4f6; }
+.plan-icono { font-size: 2.8rem; flex-shrink: 0; }
+.plan-titulo h2 { font-size: 1.4rem; font-weight: 800; color: #0a2e1f; margin: 0 0 6px; letter-spacing: -0.02em; }
+.plan-titulo p  { color: #9ca3af; font-size: 0.88rem; margin: 0; }
+
+.acciones-lista { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+.accion-card {
+  display: flex; gap: 20px; background: #f7faf8;
+  border: 1px solid #e5ede9; border-radius: 16px; padding: 22px 24px;
+  align-items: flex-start; transition: 0.2s;
+}
+.accion-card:hover { border-color: #2e8b57; background: white; }
+.accion-numero {
+  width: 36px; height: 36px; background: #0a2e1f; color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+}
+.accion-contenido h3 { font-size: 1rem; font-weight: 700; color: #111827; margin: 0 0 8px; }
+.accion-contenido p  { color: #6b7280; font-size: 0.9rem; margin: 0 0 14px; line-height: 1.6; }
+.accion-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-tag { padding: 4px 11px; border-radius: 20px; font-size: 0.77rem; font-weight: 600; }
+.meta-tag.tiempo { background: #e0f2fe; color: #0369a1; }
+.dif-baja  { background: #d1fae5; color: #065f46; }
+.dif-media { background: #fef3c7; color: #92400e; }
+.dif-alta  { background: #fee2e2; color: #991b1b; }
+
+.plan-botones { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn-volver { padding: 12px 22px; background: transparent; border: 1.5px solid #d1d9dd; color: #374151; border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: 0.2s; }
+.btn-volver:hover { border-color: #2e8b57; color: #2e8b57; }
+.btn-dashboard { padding: 12px 22px; background: #0a2e1f; color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: 0.2s; }
+.btn-dashboard:hover { background: #1c5b39; }
+
+@media (max-width: 600px) {
+  .sim-hero h1 { font-size: 1.6rem; }
+  .plan-resultado { padding: 24px; }
+  .accion-card { flex-direction: column; }
+}

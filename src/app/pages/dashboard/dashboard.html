@@ -1,0 +1,275 @@
+<div class="dashboard-page">
+
+  <!-- MODAL CONFIRMACIÓN ELIMINAR -->
+  <div class="modal-overlay" *ngIf="mostrarModal" (click)="cancelarEliminar()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">🗑️</div>
+      <h3 class="modal-titulo">¿Eliminar registro?</h3>
+      <p class="modal-desc">Esta acción no se puede deshacer. El registro será eliminado permanentemente.</p>
+      <div class="modal-acciones">
+        <button class="btn-modal-cancel" (click)="cancelarEliminar()">Cancelar</button>
+        <button class="btn-modal-confirm" (click)="confirmarEliminar()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="dash-hero">
+    <div>
+      <div class="dash-greeting">{{ saludo }}, <strong>{{ nombreEmpresa }}</strong> 👋</div>
+      <h1>Panel de Impacto ESG</h1>
+      <p class="dash-sub">{{ sectorEmpresa }} · {{ fechaHoy }}</p>
+    </div>
+    <button routerLink="/registro-impacto" class="btn-primary">+ Registrar datos</button>
+  </div>
+
+  <!-- SIN DATOS -->
+  <div class="empty-state" *ngIf="sinDatos">
+    <div class="empty-icon">🌱</div>
+    <h2>¡Empieza tu camino sostenible!</h2>
+    <p>Aún no tienes datos registrados. Comienza por uno de estos pasos:</p>
+    <div class="sugerencias-grid">
+      <div class="sugerencia-card">
+        <span class="sug-icon">⚡</span>
+        <p>Registra tu consumo de electricidad del mes</p>
+        <button routerLink="/registro-impacto" class="btn-sug">Empezar</button>
+      </div>
+      <div class="sugerencia-card">
+        <span class="sug-icon">💧</span>
+        <p>Anota el agua utilizada en tu producción</p>
+        <button routerLink="/registro-impacto" class="btn-sug">Empezar</button>
+      </div>
+      <div class="sugerencia-card">
+        <span class="sug-icon">♻️</span>
+        <p>Define un objetivo de reducción de residuos</p>
+        <button routerLink="/objetivos" class="btn-sug">Empezar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CON DATOS -->
+  <div *ngIf="!sinDatos">
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card energia">
+        <div class="kpi-top">
+          <span class="kpi-label">Energía total</span>
+          <div class="kpi-badge" [ngClass]="badgeEnergia">{{ textoEnergia }}</div>
+        </div>
+        <div class="kpi-value">{{ totalEnergia | number:'1.0-0' }}<small>kWh</small></div>
+        <div class="kpi-trend" [ngClass]="trendEnergia.clase">{{ trendEnergia.texto }}</div>
+        <div class="kpi-bar"><div [style.width]="barEnergia+'%'" class="kpi-bar-fill energia-fill"></div></div>
+      </div>
+      <div class="kpi-card agua">
+        <div class="kpi-top">
+          <span class="kpi-label">Agua total</span>
+          <div class="kpi-badge" [ngClass]="badgeAgua">{{ textoAgua }}</div>
+        </div>
+        <div class="kpi-value">{{ totalAgua | number:'1.0-0' }}<small>L</small></div>
+        <div class="kpi-trend" [ngClass]="trendAgua.clase">{{ trendAgua.texto }}</div>
+        <div class="kpi-bar"><div [style.width]="barAgua+'%'" class="kpi-bar-fill agua-fill"></div></div>
+      </div>
+      <div class="kpi-card co2">
+        <div class="kpi-top">
+          <span class="kpi-label">CO₂ emitido</span>
+          <div class="kpi-badge" [ngClass]="badgeCo2">{{ textoCo2 }}</div>
+        </div>
+        <div class="kpi-value">{{ totalCo2 | number:'1.0-0' }}<small>kg</small></div>
+        <div class="kpi-trend" [ngClass]="trendCo2.clase">{{ trendCo2.texto }}</div>
+        <div class="kpi-bar"><div [style.width]="barCo2+'%'" class="kpi-bar-fill co2-fill"></div></div>
+      </div>
+      <div class="kpi-card residuos">
+        <div class="kpi-top">
+          <span class="kpi-label">Residuos</span>
+          <div class="kpi-badge" [ngClass]="badgeResiduos">{{ textoResiduos }}</div>
+        </div>
+        <div class="kpi-value">{{ totalResiduos | number:'1.0-0' }}<small>kg</small></div>
+        <div class="kpi-trend" [ngClass]="trendResiduos.clase">{{ trendResiduos.texto }}</div>
+        <div class="kpi-bar"><div [style.width]="barResiduos+'%'" class="kpi-bar-fill residuos-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- FILA MEDIA: Índice + Gamificación -->
+    <div class="mid-row">
+
+      <!-- ÍNDICE -->
+      <div class="indice-card">
+        <div class="indice-top">
+          <div>
+            <h3>Índice de Sostenibilidad</h3>
+            <p class="indice-desc">Basado en {{ impactos.length }} registro{{ impactos.length !== 1 ? 's' : '' }}</p>
+          </div>
+          <div class="indice-num" [ngClass]="indiceClase">{{ indicePorcentaje }}%</div>
+        </div>
+        <div class="indice-barra">
+          <div class="barra-fill" [style.width]="indicePorcentaje + '%'" [ngClass]="indiceClase"></div>
+        </div>
+        <p class="indice-texto">{{ indiceMensaje }}</p>
+        <div class="indice-mini-grid">
+          <div class="mini-pill" [ngClass]="badgeEnergia">⚡ Energía</div>
+          <div class="mini-pill" [ngClass]="badgeAgua">💧 Agua</div>
+          <div class="mini-pill" [ngClass]="badgeCo2">🌫️ CO₂</div>
+          <div class="mini-pill" [ngClass]="badgeResiduos">🗑️ Residuos</div>
+        </div>
+      </div>
+
+      <!-- GAMIFICACIÓN -->
+      <div class="gami-card">
+        <h3>Tu progreso</h3>
+        <div class="nivel-row">
+          <div class="nivel-icon">{{ nivelIcono }}</div>
+          <div>
+            <div class="nivel-nombre">{{ nivel }}</div>
+            <div class="nivel-sub">{{ puntos }} puntos ESG</div>
+          </div>
+          <div class="puntos-grande">{{ puntos }}<span>pts</span></div>
+        </div>
+        <div class="nivel-track">
+          <div class="nivel-fill" [style.width]="progresoNivel + '%'"></div>
+        </div>
+        <div class="nivel-rango">
+          <span>{{ puntosNivelActual }} pts</span>
+          <span *ngIf="nivel !== 'Oro'">Siguiente: {{ puntosNivelSiguiente }} pts</span>
+          <span *ngIf="nivel === 'Oro'">¡Nivel máximo! 🏆</span>
+        </div>
+        <div class="medallas-wrap" *ngIf="medallas.length > 0">
+          <p class="medallas-titulo">Logros</p>
+          <div class="medallas-list">
+            <span *ngFor="let m of medallas" class="medalla-chip">{{ m }}</span>
+          </div>
+        </div>
+        <p class="medallas-hint" *ngIf="medallas.length === 0">
+          Sigue registrando datos para desbloquear logros 🏅
+        </p>
+      </div>
+
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="insights-card" *ngIf="insights.length">
+      <h3>🔍 Análisis automático</h3>
+      <div class="insights-grid">
+        <div *ngFor="let ins of insights" class="insight-chip">{{ ins }}</div>
+      </div>
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+    <div class="stats-card">
+      <h3>Estadísticas del período</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-val">{{ impactos.length }}</span>
+          <span class="stat-lbl">Registros totales</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">{{ promedioEnergia | number:'1.0-0' }}</span>
+          <span class="stat-lbl">Media energía/reg (kWh)</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">{{ promedioAgua | number:'1.0-0' }}</span>
+          <span class="stat-lbl">Media agua/reg (L)</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">{{ promedioCo2 | number:'1.0-0' }}</span>
+          <span class="stat-lbl">Media CO₂/reg (kg)</span>
+        </div>
+        <div class="stat-item" [ngClass]="reduccionEnergia <= 0 ? 'stat-verde' : 'stat-rojo'">
+          <span class="stat-val">{{ reduccionEnergia > 0 ? '+' : '' }}{{ reduccionEnergia }}%</span>
+          <span class="stat-lbl">Variación energía</span>
+        </div>
+        <div class="stat-item" [ngClass]="reduccionCo2 <= 0 ? 'stat-verde' : 'stat-rojo'">
+          <span class="stat-val">{{ reduccionCo2 > 0 ? '+' : '' }}{{ reduccionCo2 }}%</span>
+          <span class="stat-lbl">Variación CO₂</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="graficos-grid">
+      <div class="grafico-card">
+        <h3>Evolución de consumos</h3>
+        <p class="grafico-sub">Energía y agua por registro</p>
+        <canvas #graficoLineas></canvas>
+      </div>
+      <div class="grafico-card">
+        <h3>Distribución por tipo</h3>
+        <p class="grafico-sub">Peso relativo de cada indicador</p>
+        <canvas #graficoDona></canvas>
+      </div>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="historial-card">
+      <div class="historial-head">
+        <h3>Historial de registros</h3>
+        <button class="btn-export" (click)="exportarCSV()">📥 Exportar CSV</button>
+      </div>
+      <div class="tabla-wrap">
+        <table class="tabla-historial">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>⚡ Energía (kWh)</th>
+            <th>💧 Agua (L)</th>
+            <th>🌫️ CO₂ (kg)</th>
+            <th>🗑️ Residuos (kg)</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let imp of impactos; let i = index">
+            <td><span class="row-num">{{ i + 1 }}</span></td>
+            <td>{{ imp.energia }}</td>
+            <td>{{ imp.agua }}</td>
+            <td>{{ imp.co2 }}</td>
+            <td>{{ imp.residuos }}</td>
+            <td><button class="btn-del" (click)="pedirConfirmacion(i)">✕</button></td>
+          </tr>
+          <tr *ngIf="impactos.length === 0">
+            <td colspan="6" class="empty-row">No hay datos aún</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="acciones-section">
+      <h3>Acciones rápidas</h3>
+      <div class="acciones-grid">
+        <button routerLink="/simulador-plan"       class="accion-card">
+          <span class="ac-icon">🗺️</span>
+          <span class="ac-title">Plan de acción</span>
+          <span class="ac-desc">Simula escenarios de mejora</span>
+        </button>
+        <button routerLink="/calculadora"          class="accion-card">
+          <span class="ac-icon">📊</span>
+          <span class="ac-title">Calculadora</span>
+          <span class="ac-desc">Calcula tu eficiencia</span>
+        </button>
+        <button routerLink="/informe-pdf"          class="accion-card">
+          <span class="ac-icon">📄</span>
+          <span class="ac-title">Informe PDF</span>
+          <span class="ac-desc">Reporte de sostenibilidad</span>
+        </button>
+        <button routerLink="/buscador-proveedores" class="accion-card">
+          <span class="ac-icon">🏭</span>
+          <span class="ac-title">Proveedores</span>
+          <span class="ac-desc">Socios sostenibles</span>
+        </button>
+        <button routerLink="/objetivos"            class="accion-card">
+          <span class="ac-icon">🎯</span>
+          <span class="ac-title">Objetivos ESG</span>
+          <span class="ac-desc">Gestiona tus metas</span>
+        </button>
+        <button routerLink="/comunidad"            class="accion-card">
+          <span class="ac-icon">🌍</span>
+          <span class="ac-title">Comunidad</span>
+          <span class="ac-desc">Conecta con otras empresas</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

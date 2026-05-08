@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.ranking-page {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  background: #f8fafb;
+  min-height: 100vh;
+  color: #111827;
+}
+
+/* HEADER */
+.ranking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.ranking-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0a2e1f;
+  margin: 0 0 4px;
+  letter-spacing: -0.03em;
+}
+.subtitle { color: #6b7280; font-size: 0.9rem; margin: 0; }
+
+.btn-volver {
+  background: transparent;
+  border: 1.5px solid #e5e7eb;
+  color: #555;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-volver:hover { border-color: #2e8b57; color: #2e8b57; background: #f0faf5; }
+
+/* EMPTY */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.empty-icon { font-size: 3.5rem; margin-bottom: 16px; }
+.empty-state h2 { color: #0a2e1f; margin-bottom: 8px; font-size: 1.4rem; }
+.empty-state p { color: #9ca3af; margin-bottom: 28px; }
+.btn-action {
+  background: #2e8b57;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* PODIO */
+.podio-section {
+  margin-bottom: 36px;
+}
+.podio {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+}
+.podio-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 140px;
+}
+.podio-winner { z-index: 1; }
+.podio-corona { font-size: 1.5rem; line-height: 1; }
+.podio-medal  { font-size: 2rem; line-height: 1; }
+.podio-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 800;
+}
+.oro-av    { background: #fef3c7; color: #92400e; box-shadow: 0 0 0 3px #f59e0b; }
+.plata-av  { background: #f3f4f6; color: #374151; box-shadow: 0 0 0 3px #9ca3af; }
+.bronce-av { background: #fdf3e7; color: #92400e; box-shadow: 0 0 0 3px #cd7f32; }
+
+.podio-nombre {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.podio-puntos { font-size: 0.78rem; color: #6b7280; font-weight: 600; }
+
+.podio-bloque {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px 10px 0 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: white;
+}
+.podio-bloque span { line-height: 1; }
+.oro-bloque    { height: 90px;  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%); }
+.plata-bloque  { height: 60px;  background: linear-gradient(180deg, #9ca3af 0%, #6b7280 100%); }
+.bronce-bloque { height: 46px;  background: linear-gradient(180deg, #cd7f32 0%, #a0612a 100%); }
+
+/* TABLA */
+.tabla-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+.tabla-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+.tabla-header h3 { font-size: 1rem; font-weight: 700; color: #0a2e1f; margin: 0; }
+.tabla-sub { font-size: 0.82rem; color: #9ca3af; }
+
+.tabla-wrap { overflow-x: auto; }
+.ranking-tabla { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.ranking-tabla thead tr { background: #0a2e1f; }
+.ranking-tabla th {
+  padding: 12px 16px;
+  text-align: left;
+  color: white;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+.ranking-tabla td { padding: 14px 16px; border-bottom: 1px solid #f3f4f6; }
+.ranking-tabla tbody tr:hover td { background: #f0faf5; }
+.fila-oro td    { background: #fffbeb; }
+.fila-plata td  { background: #fafafa; }
+.fila-bronce td { background: #fffaf5; }
+.fila-oro:hover td    { background: #fef3c7 !important; }
+.fila-plata:hover td  { background: #f3f4f6 !important; }
+.fila-bronce:hover td { background: #fef3e7 !important; }
+
+.th-pos { width: 70px; text-align: center; }
+.th-nivel { width: 130px; }
+
+.col-pos { text-align: center; }
+.medal-emoji { font-size: 1.5rem; }
+.num-pos { font-size: 1rem; font-weight: 700; color: #9ca3af; }
+
+.col-empresa { min-width: 160px; }
+.empresa-row { display: flex; align-items: center; gap: 12px; }
+.empresa-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.av-top    { background: #dcfce7; color: #166534; }
+.av-mid    { background: #e0f2fe; color: #0369a1; }
+.av-normal { background: #f3f4f6; color: #374151; }
+.empresa-nombre { font-weight: 700; color: #111827; font-size: 0.9rem; }
+.empresa-sub    { font-size: 0.75rem; color: #9ca3af; }
+
+.col-puntos { min-width: 180px; }
+.puntos-row { display: flex; align-items: center; gap: 10px; }
+.barra-track {
+  flex: 1;
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.barra-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #2e8b57);
+  border-radius: 20px;
+  transition: width 0.8s ease;
+  min-width: 4px;
+}
+.puntos-num { font-weight: 700; font-size: 0.9rem; color: #111827; min-width: 32px; }
+
+.nivel-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.nivel-elite      { background: #fef3c7; color: #92400e; }
+.nivel-avanzado   { background: #d1fae5; color: #065f46; }
+.nivel-intermedio { background: #e0f2fe; color: #075985; }
+.nivel-inicial    { background: #f3f4f6; color: #374151; }
+
+@media (max-width: 600px) {
+  .podio { gap: 6px; }
+  .podio-item { min-width: 100px; }
+  .podio-nombre { font-size: 0.75rem; max-width: 95px; }
+}

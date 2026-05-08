@@ -1,0 +1,173 @@
+<div class="comunidad-page">
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="hero-inner">
+      <div class="hero-badge">Comunidad ESG</div>
+      <h1>Conecta con empresas<br>que impulsan el cambio</h1>
+      <p>Comparte aprendizajes, resuelve dudas y celebra logros con otras empresas comprometidas con la sostenibilidad.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">{{ posts.length }}</span>
+        <span class="stat-label">Publicaciones</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">{{ postsDestacados.length }}</span>
+        <span class="stat-label">Destacadas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">{{ totalLikes }}</span>
+        <span class="stat-label">Interacciones</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="comunidad-body">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <div class="col-main">
+
+      <!-- CREAR POST -->
+      <div class="crear-card">
+        <div class="crear-header">
+          <div class="avatar-sm">{{ nombreEmpresa.charAt(0) }}</div>
+          <span class="crear-hint">¿Qué quieres compartir hoy?</span>
+        </div>
+
+        <textarea
+          [(ngModel)]="nuevoPost"
+          placeholder="Describe tu experiencia, comparte una estrategia de reducción de emisiones, o pregunta algo a la comunidad..."
+          class="crear-textarea"
+          rows="4">
+        </textarea>
+
+        <div class="crear-footer">
+          <div class="tipo-pills">
+            <button *ngFor="let t of tipos"
+                    class="pill"
+                    [class.selected]="nuevoTipo === t.valor"
+                    (click)="nuevoTipo = t.valor">
+              {{ t.emoji }} {{ t.label }}
+            </button>
+          </div>
+          <button class="btn-publicar" (click)="publicar()" [disabled]="!nuevoPost.trim()">
+            Publicar
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTROS -->
+      <div class="filtros-bar">
+        <button class="filtro-btn" [class.active]="filtroTipo === ''"       (click)="filtroTipo = ''">Todos</button>
+        <button class="filtro-btn" [class.active]="filtroTipo === 'idea'"    (click)="filtroTipo = 'idea'">💡 Ideas</button>
+        <button class="filtro-btn" [class.active]="filtroTipo === 'pregunta'"(click)="filtroTipo = 'pregunta'">❓ Preguntas</button>
+        <button class="filtro-btn" [class.active]="filtroTipo === 'logro'"   (click)="filtroTipo = 'logro'">🏆 Logros</button>
+      </div>
+
+      <!-- POSTS VACÍO -->
+      <div class="empty-feed" *ngIf="postsFiltrados.length === 0">
+        <div class="empty-icon">🌱</div>
+        <p>Sé el primero en publicar en esta categoría</p>
+      </div>
+
+      <!-- FEED -->
+      <div class="feed">
+        <div *ngFor="let post of postsFiltrados" class="post-card">
+
+          <div class="post-top">
+            <div class="post-avatar">{{ post.autor.charAt(0) }}</div>
+            <div class="post-meta">
+              <strong class="post-autor">{{ post.autor }}</strong>
+              <span class="post-fecha">{{ post.fecha | date:'d MMM, HH:mm' }}</span>
+            </div>
+            <span class="post-tipo" [ngClass]="'tipo-' + post.tipo">
+              {{ tipoLabel(post.tipo) }}
+            </span>
+          </div>
+
+          <p class="post-texto">{{ post.texto }}</p>
+
+          <div class="post-actions">
+            <button class="action-btn like" (click)="darLike(post)">
+              <span class="action-icon">👍</span>
+              <span>{{ post.likes }}</span>
+            </button>
+            <button class="action-btn comment-toggle" (click)="post.showComments = !post.showComments">
+              <span class="action-icon">💬</span>
+              <span>{{ post.comentarios.length }}</span>
+            </button>
+            <button class="action-btn delete" (click)="eliminar(post)" *ngIf="post.autor === nombreEmpresa">
+              Eliminar
+            </button>
+          </div>
+
+          <!-- COMENTARIOS -->
+          <div class="comentarios-section" *ngIf="post.showComments">
+            <div *ngFor="let c of post.comentarios" class="comentario">
+              <div class="com-avatar">{{ c.autor.charAt(0) }}</div>
+              <div class="com-body">
+                <strong>{{ c.autor }}</strong>
+                <p>{{ c.texto }}</p>
+              </div>
+            </div>
+
+            <div class="comentar-row">
+              <div class="com-avatar mine">{{ nombreEmpresa.charAt(0) }}</div>
+              <input #comentarioInput class="comentar-input" placeholder="Añade un comentario..." />
+              <button class="btn-comentar" (click)="comentar(post, comentarioInput.value); comentarioInput.value=''">
+                Enviar
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUMNA DERECHA -->
+    <aside class="col-aside">
+
+      <!-- DESTACADOS -->
+      <div class="aside-card" *ngIf="postsDestacados.length > 0">
+        <h3 class="aside-title">🔥 Más valorados</h3>
+        <div *ngFor="let post of postsDestacados.slice(0,3)" class="destacado-item">
+          <div class="dest-avatar">{{ post.autor.charAt(0) }}</div>
+          <div class="dest-info">
+            <strong>{{ post.autor }}</strong>
+            <p>{{ post.texto | slice:0:80 }}{{ post.texto.length > 80 ? '…' : '' }}</p>
+            <span class="dest-likes">❤️ {{ post.likes }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="aside-card faq-card">
+        <h3 class="aside-title">📋 Preguntas frecuentes</h3>
+        <div class="faq-list">
+          <div *ngFor="let faq of faqs" class="faq-item" (click)="faq.open = !faq.open">
+            <div class="faq-q">
+              <span>{{ faq.pregunta }}</span>
+              <span class="faq-chevron" [class.rotated]="faq.open">▾</span>
+            </div>
+            <div class="faq-a" *ngIf="faq.open">{{ faq.respuesta }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GUÍA -->
+      <div class="aside-card guia-card">
+        <h3 class="aside-title">💡 Guía de la comunidad</h3>
+        <ul class="guia-list">
+          <li>Comparte estrategias reales y aprendizajes concretos</li>
+          <li>Respeta las experiencias de otras empresas</li>
+          <li>Usa la categoría adecuada para cada publicación</li>
+          <li>Da like a los contenidos que te resultan útiles</li>
+        </ul>
+      </div>
+
+    </aside>
+
+  </div>
+</div>

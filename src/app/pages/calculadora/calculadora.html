@@ -1,0 +1,119 @@
+<div class="calc-page">
+
+  <!-- HERO -->
+  <header class="calc-hero">
+    <h1>Calculadora de eficiencia</h1>
+    <p>
+      Calcula el impacto ambiental por unidad producida usando tus datos registrados.
+    </p>
+
+    <div class="calc-badges">
+      <span>⚡ análisis automático</span>
+      <span>🌍 impacto por unidad</span>
+      <span>📊 métricas ESG</span>
+    </div>
+  </header>
+
+  <!-- INPUT SIMPLE -->
+  <section class="calc-form-card">
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Unidades producidas</label>
+        <input type="number"
+               [(ngModel)]="unidades"
+               placeholder="Ej: 5000">
+      </div>
+
+      <div class="form-group">
+        <label>Mes de análisis</label>
+        <input type="month" [(ngModel)]="mes">
+      </div>
+
+    </div>
+
+    <button class="btn-primary"
+            (click)="calcular()"
+            [disabled]="!unidades || unidades <= 0">
+      Calcular eficiencia
+    </button>
+
+  </section>
+
+  <!-- WARNING -->
+  <div class="alert-warning" *ngIf="sinDatos">
+    ⚠️ No hay datos de impacto registrados.
+    <a routerLink="/registro-impacto">Registrar consumos</a>
+  </div>
+
+  <!-- RESULTS -->
+  <section class="results" *ngIf="calculado && !sinDatos">
+
+    <h2 class="section-title">Impacto por unidad producida</h2>
+
+    <div class="metrics-grid">
+
+      <div class="metric-card">
+        <span class="icon">⚡</span>
+        <span class="label">Energía</span>
+        <div class="value">
+          {{ eficienciaEnergia | number:'1.2-2' }}
+          <small>kWh / unidad</small>
+        </div>
+        <span class="badge" [ngClass]="semEnergia">
+          {{ textoSemEnergia }}
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="icon">💧</span>
+        <span class="label">Agua</span>
+        <div class="value">
+          {{ eficienciaAgua | number:'1.2-2' }}
+          <small>L / unidad</small>
+        </div>
+        <span class="badge" [ngClass]="semAgua">
+          {{ textoSemAgua }}
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="icon">🌫️</span>
+        <span class="label">CO₂</span>
+        <div class="value">
+          {{ eficienciaCo2 | number:'1.2-2' }}
+          <small>kg / unidad</small>
+        </div>
+        <span class="badge" [ngClass]="semCo2">
+          {{ textoSemCo2 }}
+        </span>
+      </div>
+
+      <div class="metric-card">
+        <span class="icon">🗑️</span>
+        <span class="label">Residuos</span>
+        <div class="value">
+          {{ eficienciaResiduos | number:'1.2-2' }}
+          <small>kg / unidad</small>
+        </div>
+        <span class="badge" [ngClass]="semResiduos">
+          {{ textoSemResiduos }}
+        </span>
+      </div>
+
+    </div>
+
+    <!-- CONCLUSIÓN -->
+    <div class="conclusion" [ngClass]="'conclusion-' + nivelGeneral">
+      <h3>{{ mensajeGeneral }}</h3>
+      <p>{{ descripcionGeneral }}</p>
+    </div>
+
+  </section>
+
+  <button class="btn-secondary" routerLink="/dashboard">
+    ← Volver
+  </button>
+
+</div>

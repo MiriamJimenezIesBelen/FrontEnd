@@ -1,0 +1,65 @@
+<div class="simulador-page">
+
+  <div class="sim-hero">
+    <div class="hero-tag">🗺️ Planificación sostenible</div>
+    <h1>Simulador de plan<br>de acción</h1>
+    <p>Selecciona el área que quieres mejorar y te generamos un plan de acción personalizado al instante.</p>
+  </div>
+
+  <p class="areas-label" *ngIf="!planGenerado">Elige el área a mejorar</p>
+  <!-- elegir área -->
+  <!-- Cuando haces click guarda el area seleccionada -->
+  <div class="areas-grid" *ngIf="!planGenerado">
+    <button
+      class="area-card"
+      *ngFor="let area of areas"
+      [class.seleccionada]="areaSeleccionada === area.clave"
+      (click)="seleccionar(area.clave)">
+      <span class="area-icon">{{ area.icono }}</span>
+      <span class="area-nombre">{{ area.nombre }}</span>
+    </button>
+  </div>
+
+  <div class="btn-generar-wrap" *ngIf="areaSeleccionada && !planGenerado">
+    <button class="btn-generar" (click)="generarPlan()">
+      Generar mi plan de acción →
+    </button>
+  </div>
+
+  <!-- mostrar plan -->
+  <div class="plan-resultado" *ngIf="planGenerado">
+
+    <div class="plan-titulo">
+      <span class="plan-icono">{{ planActual.icono }}</span>
+      <div>
+        <h2>Plan de acción: {{ planActual.nombre }}</h2>
+        <p>Aquí tienes 3 acciones concretas para empezar</p>
+      </div>
+    </div>
+
+    <div class="acciones-lista">
+      <div class="accion-card" *ngFor="let accion of planActual.acciones; let i = index">
+        <div class="accion-numero">{{ i + 1 }}</div>
+        <div class="accion-contenido">
+          <h3>{{ accion.titulo }}</h3>
+          <p>{{ accion.descripcion }}</p>
+          <div class="accion-meta">
+            <span class="meta-tag tiempo">⏱ {{ accion.tiempo }}</span>
+            <span class="meta-tag" [ngClass]="'dif-' + accion.dificultad">
+              {{ accion.dificultad === 'baja' ? '🟢 Dificultad baja' : accion.dificultad === 'media' ? '🟡 Dificultad media' : '🔴 Dificultad alta' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="plan-botones">
+      <button class="btn-volver" (click)="resetear()">← Elegir otra área</button>
+      <button class="btn-dashboard" routerLink="/dashboard">Ir al dashboard</button>
+    </div>
+
+  </div>
+
+  <button class="btn-volver" routerLink="/dashboard">← Volver</button>
+
+</div>

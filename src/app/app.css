@@ -1,0 +1,111 @@
+body{
+  font-family: Arial;
+  margin:0;
+  background:#f4f7f9;
+}
+
+/* HEADER */
+
+.main-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 8%;
+  background:#0f3d3e;
+  color:white;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo img{
+  width:40px;
+}
+
+nav button{
+  margin-left:10px;
+}
+
+/* HERO */
+
+.hero{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:80px 8%;
+}
+
+.hero-text{
+  width:50%;
+}
+
+.hero-text h1{
+  font-size:40px;
+  margin-bottom:20px;
+}
+
+.hero-image img{
+  width:450px;
+  border-radius:10px;
+}
+
+/* BOTONES */
+
+.btn-main{
+  background:#2e8b57;
+  color:white;
+  border:none;
+  padding:12px 25px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.btn-secondary{
+  background:white;
+  border:2px solid #2e8b57;
+  color:#2e8b57;
+  padding:12px 25px;
+  margin-left:10px;
+}
+
+/* ABOUT */
+
+.about{
+  text-align:center;
+  padding:80px 10%;
+}
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:30px;
+  margin-top:40px;
+}
+
+.feature{
+  background:white;
+  padding:25px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* CTA */
+
+.cta{
+  text-align:center;
+  padding:80px;
+  background:#0f3d3e;
+  color:white;
+}
+
+/* FOOTER */
+
+footer{
+  text-align:center;
+  padding:30px;
+  background:#1a1a1a;
+  color:#ccc;
+}

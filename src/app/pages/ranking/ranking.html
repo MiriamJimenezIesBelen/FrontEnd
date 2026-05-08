@@ -1,0 +1,110 @@
+<div class="ranking-page">
+
+  <div class="ranking-header">
+    <div>
+      <h1>🏆 Ranking ESG</h1>
+      <p class="subtitle">Clasificación por puntuación de sostenibilidad acumulada</p>
+    </div>
+    <button class="btn-volver" routerLink="/dashboard">← Dashboard</button>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" *ngIf="ranking.length === 0">
+    <div class="empty-icon">📊</div>
+    <h2>Aún no hay empresas en el ranking</h2>
+    <p>Registra datos de impacto para aparecer en la clasificación.</p>
+    <button class="btn-action" routerLink="/registro-impacto">Registrar datos</button>
+  </div>
+
+  <div class="podio-section" *ngIf="ranking?.length">
+
+    <div class="podio">
+
+      <!-- 2º -->
+      <div class="podio-item" *ngIf="ranking[1]">
+        <div class="podio-medal">🥈</div>
+        <div class="podio-avatar plata-av">
+          {{ ranking[1]?.nombre?.charAt(0) || '?' }}
+        </div>
+        <div class="podio-nombre">{{ ranking[1]?.nombre }}</div>
+        <div class="podio-puntos">{{ ranking[1]?.puntos }} pts</div>
+      </div>
+
+      <!-- 1º -->
+      <div class="podio-item podio-winner" *ngIf="ranking[0]">
+        <div class="podio-corona">👑</div>
+        <div class="podio-medal">🥇</div>
+        <div class="podio-avatar oro-av">
+          {{ ranking[0]?.nombre?.charAt(0) || '?' }}
+        </div>
+        <div class="podio-nombre">{{ ranking[0]?.nombre }}</div>
+        <div class="podio-puntos">{{ ranking[0]?.puntos }} pts</div>
+      </div>
+
+      <!-- 3º -->
+      <div class="podio-item" *ngIf="ranking[2]">
+        <div class="podio-medal">🥉</div>
+        <div class="podio-avatar bronce-av">
+          {{ ranking[2]?.nombre?.charAt(0) || '?' }}
+        </div>
+        <div class="podio-nombre">{{ ranking[2]?.nombre }}</div>
+        <div class="podio-puntos">{{ ranking[2]?.puntos }} pts</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TABLA COMPLETA -->
+  <div class="tabla-card" *ngIf="ranking.length > 0">
+    <div class="tabla-header">
+      <h3>Clasificación completa</h3>
+      <span class="tabla-sub">{{ ranking.length }} empresa{{ ranking.length !== 1 ? 's' : '' }} registradas</span>
+    </div>
+    <div class="tabla-wrap">
+      <table class="ranking-tabla">
+        <thead>
+        <tr>
+          <th class="th-pos">Pos.</th>
+          <th>Empresa</th>
+          <th>Puntuación ESG</th>
+          <th class="th-nivel">Nivel</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let r of ranking; let i = index"
+            [class.fila-oro]="i === 0"
+            [class.fila-plata]="i === 1"
+            [class.fila-bronce]="i === 2">
+          <td class="col-pos">
+            <span class="medal-emoji" *ngIf="i === 0">🥇</span>
+            <span class="medal-emoji" *ngIf="i === 1">🥈</span>
+            <span class="medal-emoji" *ngIf="i === 2">🥉</span>
+            <span class="num-pos" *ngIf="i > 2">{{ i + 1 }}</span>
+          </td>
+          <td class="col-empresa">
+            <div class="empresa-row">
+              <div class="empresa-avatar" [ngClass]="avatarClase(i)">{{ r.nombre.charAt(0) }}</div>
+              <div>
+                <div class="empresa-nombre">{{ r.nombre }}</div>
+                <div class="empresa-sub">{{ nivelTexto(r.puntos) }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="col-puntos">
+            <div class="puntos-row">
+              <div class="barra-track">
+                <div class="barra-fill" [style.width]="barraAncho(r.puntos) + '%'"></div>
+              </div>
+              <span class="puntos-num">{{ r.puntos }}</span>
+            </div>
+          </td>
+          <td class="col-nivel">
+            <span class="nivel-badge" [ngClass]="nivelClase(r.puntos)">{{ nivelTexto(r.puntos) }}</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

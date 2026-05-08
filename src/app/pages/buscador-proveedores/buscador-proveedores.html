@@ -1,0 +1,119 @@
+<div class="buscador-page">
+
+  <div class="buscador-hero">
+    <h1>Proveedores Sostenibles</h1>
+    <p>Descubre empresas verificadas que ayudan a reducir tu impacto ambiental</p>
+    <div class="hero-stats">
+      <div class="hstat"><span>{{ todosProveedores.length }}</span> proveedores</div>
+      <div class="hstat-sep"></div>
+      <div class="hstat"><span>5</span> categorías</div>
+      <div class="hstat-sep"></div>
+      <div class="hstat"><span>{{ proveedoresFiltrados.length }}</span> resultados</div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filtros-card">
+    <div class="filtros-grid">
+
+      <div class="filtro-group">
+        <label>🔍 Buscar</label>
+        <input
+          type="text"
+          [(ngModel)]="textoBusqueda"
+          (input)="filtrar()"
+          placeholder="Nombre, categoría...">
+      </div>
+
+      <div class="filtro-group">
+        <label>⚙️ Tipo</label>
+        <select [(ngModel)]="filtroTipo" (change)="filtrar()">
+          <option value="">Todos los tipos</option>
+          <option value="energia">⚡ Energía renovable</option>
+          <option value="materiales">🧱 Materiales reciclados</option>
+          <option value="transporte">🚚 Transporte eficiente</option>
+          <option value="residuos">♻️ Gestión de residuos</option>
+          <option value="agua">💧 Gestión del agua</option>
+        </select>
+      </div>
+
+      <div class="filtro-group">
+        <label>🏭 Sector</label>
+        <select [(ngModel)]="filtroSector" (change)="filtrar()">
+          <option value="">Todos los sectores</option>
+          <option value="manufactura">Manufactura</option>
+          <option value="alimentacion">Alimentación</option>
+          <option value="textil">Textil</option>
+          <option value="construccion">Construcción</option>
+          <option value="logistica">Logística</option>
+        </select>
+      </div>
+
+      <div class="filtro-group">
+        <label>📍 Ubicación</label>
+        <select [(ngModel)]="filtroUbicacion" (change)="filtrar()">
+          <option value="">Todas</option>
+          <option value="españa">España</option>
+          <option value="europa">Europa</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="filtros-footer">
+      <span class="resultados-count">{{ proveedoresFiltrados.length }} proveedores encontrados</span>
+      <button class="btn-limpiar" (click)="limpiarFiltros()">✕ Limpiar filtros</button>
+    </div>
+  </div>
+
+  <!-- GRID RESULTADOS -->
+  <div class="proveedores-grid" *ngIf="proveedoresFiltrados.length > 0">
+
+    <div class="proveedor-card" *ngFor="let p of proveedoresFiltrados; trackBy: trackByNombre">
+
+      <div class="proveedor-header">
+        <div class="proveedor-icono-wrap">
+          <span class="proveedor-icono">{{ p.icono }}</span>
+        </div>
+        <div class="proveedor-header-info">
+          <h3>{{ p.nombre }}</h3>
+          <span class="proveedor-ubicacion">📍 {{ p.ubicacion | titlecase }}</span>
+        </div>
+        <span class="proveedor-tipo tipo-{{ p.tipo }}">{{ p.tipoLabel }}</span>
+      </div>
+
+      <p class="proveedor-descripcion">{{ p.descripcion }}</p>
+
+      <div class="proveedor-sostenible">
+        <span class="sostenible-titulo">🌱 ¿Por qué es sostenible?</span>
+        <p>{{ p.razonSostenible }}</p>
+      </div>
+
+      <div class="proveedor-tags">
+        <span class="tag" *ngFor="let tag of p.tags">{{ tag }}</span>
+      </div>
+
+      <div class="proveedor-footer">
+        <button class="btn-web" *ngIf="p.sitioWeb" (click)="abrirWeb(p.sitioWeb)">
+          🌐 Visitar web
+        </button>
+        <span *ngIf="!p.sitioWeb" class="sin-web">Sin web disponible</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- SIN RESULTADOS -->
+  <div class="sin-resultados" *ngIf="proveedoresFiltrados.length === 0">
+    <div class="sin-icon">🔍</div>
+    <h3>Sin resultados</h3>
+    <p>No hay proveedores con esos filtros. Prueba a ampliar la búsqueda.</p>
+    <button class="btn-limpiar-big" (click)="limpiarFiltros()">Limpiar filtros</button>
+  </div>
+
+  <div class="page-footer">
+    <button class="btn-volver" routerLink="/dashboard">← Volver al dashboard</button>
+  </div>
+
+</div>

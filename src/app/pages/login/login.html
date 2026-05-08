@@ -1,0 +1,32 @@
+<div class="auth-page">
+
+  <div class="auth-card">
+
+    <div class="auth-header">
+      <h2>Acceso a tu panel</h2>
+      <p>Gestiona el impacto ambiental de tu empresa</p>
+    </div>
+
+    <input
+      type="email"
+      [(ngModel)]="correo"
+      placeholder="Correo empresarial">
+
+    <input
+      type="password"
+      [(ngModel)]="password"
+      placeholder="Contraseña">
+
+    <button class="auth-btn" (click)="login()">
+      Iniciar sesión
+    </button>
+
+    <p class="error" *ngIf="error">Credenciales incorrectas</p>
+
+    <button class="auth-back" routerLink="/home">
+      ← Volver
+    </button>
+
+  </div>
+
+</div>

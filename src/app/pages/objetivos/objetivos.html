@@ -1,0 +1,199 @@
+<div class="objetivos-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Objetivos ESG</h1>
+      <p class="subtitle">Define y monitoriza tus metas de sostenibilidad</p>
+    </div>
+    <button class="btn-new" (click)="mostrarForm = !mostrarForm">
+      {{ mostrarForm ? '✕ Cancelar' : '+ Nuevo objetivo' }}
+    </button>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="resumen-grid" *ngIf="objetivos.length > 0">
+    <div class="resumen-item">
+      <span class="res-num">{{ objetivos.length }}</span>
+      <span class="res-lbl">Total</span>
+    </div>
+    <div class="resumen-item verde">
+      <span class="res-num">{{ completados }}</span>
+      <span class="res-lbl">Completados</span>
+    </div>
+    <div class="resumen-item amarillo">
+      <span class="res-num">{{ enProgreso }}</span>
+      <span class="res-lbl">En progreso</span>
+    </div>
+    <div class="resumen-item gris">
+      <span class="res-num">{{ sinIniciar }}</span>
+      <span class="res-lbl">Sin iniciar</span>
+    </div>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="form-card" *ngIf="mostrarForm">
+    <h3 class="form-title">Nuevo objetivo ESG</h3>
+
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Tipo de métrica</label>
+        <select [(ngModel)]="objetivo.tipo" name="tipo">
+          <option value="CO2">🌫️ CO₂ (kg)</option>
+          <option value="ENERGIA">⚡ Energía (kWh)</option>
+          <option value="AGUA">💧 Agua (L)</option>
+          <option value="RESIDUOS">🗑️ Residuos (kg)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Período</label>
+        <select [(ngModel)]="objetivo.periodo" name="periodo">
+          <option value="mensual">📅 Mensual</option>
+          <option value="trimestral">📅 Trimestral</option>
+          <option value="semestral">📅 Semestral</option>
+          <option value="anual">📅 Anual</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>¿Qué quieres hacer?</label>
+        <div class="direccion-pills">
+          <button type="button" class="dir-pill"
+                  [class.selected]="objetivo.direccion === 'reducir'"
+                  (click)="objetivo.direccion = 'reducir'">
+            📉 Reducir
+          </button>
+          <button type="button" class="dir-pill"
+                  [class.selected]="objetivo.direccion === 'aumentar'"
+                  (click)="objetivo.direccion = 'aumentar'">
+            📈 Aumentar
+          </button>
+        </div>
+        <p class="dir-hint" *ngIf="objetivo.direccion === 'reducir'">
+          Quieres consumir <strong>menos</strong> de lo que marcas como objetivo.
+        </p>
+        <p class="dir-hint" *ngIf="objetivo.direccion === 'aumentar'">
+          Ej: quieres generar <strong>más</strong> energía renovable.
+          Límite sostenible: <strong>{{ getLimiteSostenible(objetivo) }} {{ unidad(objetivo.tipo) }}</strong>
+        </p>
+      </div>
+
+      <div class="field">
+        <label>Valor objetivo</label>
+        <input type="number" [(ngModel)]="objetivo.valorObjetivo" name="valorObjetivo"
+               placeholder="Ej: 5000" min="0"
+               [class.input-error]="objetivo.direccion === 'aumentar' && objetivo.valorObjetivo > getLimiteSostenible(objetivo)" />
+        <p class="field-error" *ngIf="objetivo.direccion === 'aumentar' && objetivo.valorObjetivo > getLimiteSostenible(objetivo)">
+          ⚠️ Supera el límite sostenible de {{ getLimiteSostenible(objetivo) }} {{ unidad(objetivo.tipo) }} por {{ objetivo.periodo }}
+        </p>
+      </div>
+
+      <div class="field">
+        <label>Valor actual</label>
+        <input type="number" [(ngModel)]="objetivo.valorActual" name="valorActual" placeholder="Ej: 2500" min="0" />
+      </div>
+
+      <div class="field">
+        <label>Fecha inicio</label>
+        <input type="date" [(ngModel)]="objetivo.fechaInicio" name="fechaInicio" />
+      </div>
+
+      <div class="field">
+        <label>Fecha límite</label>
+        <input type="date" [(ngModel)]="objetivo.fechaFin" name="fechaFin" />
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-crear" (click)="crear()" [disabled]="guardando">
+        {{ guardando ? 'Guardando...' : 'Guardar objetivo' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- EMPTY -->
+  <div class="empty-state" *ngIf="objetivos.length === 0 && !mostrarForm">
+    <div class="empty-icon">🎯</div>
+    <h2>Sin objetivos todavía</h2>
+    <p>Define tus primeras metas ESG para hacer seguimiento de tu impacto ambiental.</p>
+    <button class="btn-crear" (click)="mostrarForm = true">Crear primer objetivo</button>
+  </div>
+
+  <!-- CARDS -->
+  <div class="objetivos-grid" *ngIf="objetivos.length > 0">
+
+    <div *ngFor="let o of objetivos" class="objetivo-card" [ngClass]="estadoClase(o)">
+
+      <div class="obj-top">
+        <div class="obj-icono">{{ iconoTipo(o.tipo) }}</div>
+        <div class="obj-info">
+          <h3>{{ labelTipo(o.tipo) }}</h3>
+          <div class="obj-badges">
+            <div class="obj-dir-badge" [class.reducir]="o.direccion !== 'aumentar'" [class.aumentar]="o.direccion === 'aumentar'">
+              {{ o.direccion === 'aumentar' ? '📈 Aumentar' : '📉 Reducir' }}
+            </div>
+            <div class="obj-periodo-badge">
+              📅 {{ periodoLabel(o.periodo) }}
+            </div>
+          </div>
+          <div class="obj-fechas" *ngIf="o.fechaInicio || o.fechaFin">
+            <span *ngIf="o.fechaInicio">{{ o.fechaInicio | date:'d MMM yyyy' }}</span>
+            <span *ngIf="o.fechaFin"> → {{ o.fechaFin | date:'d MMM yyyy' }}</span>
+          </div>
+        </div>
+        <span class="obj-estado-badge" [ngClass]="estadoClase(o)">{{ estadoTexto(o) }}</span>
+      </div>
+
+      <div class="obj-numeros">
+        <div class="num-item">
+          <span class="num-val">{{ o.valorActual }}</span>
+          <span class="num-lbl">Actual</span>
+        </div>
+        <div class="num-sep">/</div>
+        <div class="num-item">
+          <span class="num-val">{{ o.valorObjetivo }}</span>
+          <span class="num-lbl">Objetivo</span>
+        </div>
+        <div class="num-item" *ngIf="o.direccion === 'aumentar'">
+          <span class="num-sep">·</span>
+        </div>
+        <div class="num-item" *ngIf="o.direccion === 'aumentar'">
+          <span class="num-val limite">{{ getLimiteSostenible(o) }}</span>
+          <span class="num-lbl">Límite</span>
+        </div>
+        <div class="num-item pct">
+          <span class="num-val" [ngClass]="estadoClase(o)">{{ porcentajeDisplay(o) }}%</span>
+          <span class="num-lbl">Progreso</span>
+        </div>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill"
+             [style.width]="Math.min(porcentajeDisplay(o), 100) + '%'"
+             [ngClass]="estadoClase(o)">
+        </div>
+      </div>
+
+      <p class="obj-explicacion">{{ explicacion(o) }}</p>
+
+      <button class="btn-eliminar" (click)="pedirConfirmacion(o)">✕</button>
+
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" *ngIf="mostrarModal" (click)="cancelarEliminar()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">🗑️</div>
+      <h3 class="modal-titulo">¿Eliminar objetivo?</h3>
+      <p class="modal-desc">Esta acción no se puede deshacer. El objetivo será eliminado permanentemente.</p>
+      <div class="modal-acciones">
+        <button class="btn-modal-cancel" (click)="cancelarEliminar()">Cancelar</button>
+        <button class="btn-modal-confirm" (click)="confirmarEliminar()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+</div>

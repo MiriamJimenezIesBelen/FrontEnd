@@ -1,0 +1,105 @@
+<div class="game">
+
+  <div class="game-header">
+    <div class="game-title">ESG Manager</div>
+    <div class="game-subtitle">Toma decisiones sostenibles y lidera tu empresa al éxito</div>
+  </div>
+
+  <div class="hud">
+    <div class="hud-card">
+      <div class="hud-label">Presupuesto</div>
+      <div class="hud-val"
+           [class.danger]="dinero < 3000"
+           [class.ok]="dinero >= 8000">
+        {{ dinero }} €
+      </div>
+    </div>
+    <div class="hud-card">
+      <div class="hud-label">Puntuación ESG</div>
+      <div class="hud-val"
+           [class.danger]="esg < 30"
+           [class.warn]="esg >= 30 && esg < 60"
+           [class.ok]="esg >= 60">
+        {{ esg }}
+      </div>
+    </div>
+    <div class="hud-card">
+      <div class="hud-label">Ronda</div>
+      <div class="hud-val">{{ ronda }} / {{ maxRondas }}</div>
+    </div>
+  </div>
+
+  <div class="esg-bar-wrap">
+    <div class="esg-bar-label">
+      <span>ESG Score</span>
+      <span>{{ esgTag }}</span>
+    </div>
+    <div class="esg-bar-track">
+      <div class="esg-bar-fill"
+           [style.width.%]="esgPct"
+           [style.background]="esgColor">
+      </div>
+    </div>
+  </div>
+
+  <div class="round-track">
+    <div *ngFor="let r of rondasArray; let i = index"
+         class="round-dot"
+         [class.done]="i + 1 < ronda"
+         [class.current]="i + 1 === ronda">
+      {{ i + 1 }}
+    </div>
+  </div>
+
+  <div class="event-card" *ngIf="eventoActual && !juegoTerminado">
+    <span class="event-tag" [ngClass]="'tag-' + eventoActual.tag">
+      {{ eventoActual.tag }}
+    </span>
+    <div class="event-title">{{ eventoActual.titulo }}</div>
+    <div class="event-desc">{{ eventoActual.desc }}</div>
+
+    <div class="options">
+      <button class="opt-btn"
+              *ngFor="let o of eventoActual.opciones"
+              [disabled]="esperando"
+              (click)="elegir(o)">
+        <div class="opt-text">
+          <div class="opt-label">{{ o.label }}</div>
+          <div class="opt-hint">{{ o.hint }}</div>
+        </div>
+        <div class="opt-effects">
+          <span class="effect-pill"
+                [class.pill-pos-money]="o.dinero >= 0"
+                [class.pill-neg-money]="o.dinero < 0">
+            {{ o.dinero >= 0 ? '+' : '' }}{{ o.dinero }}€
+          </span>
+          <span class="effect-pill"
+                [class.pill-pos-esg]="o.esg >= 0"
+                [class.pill-neg-esg]="o.esg < 0">
+            {{ o.esg >= 0 ? '+' : '' }}{{ o.esg }} ESG
+          </span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="toast" *ngIf="mensaje">{{ mensaje }}</div>
+
+  <div class="end-card" *ngIf="juegoTerminado">
+    <div class="end-score">{{ esg }}</div>
+    <div class="end-label">Puntuación ESG final</div>
+    <span class="end-grade" [ngClass]="endGradeClass">{{ endGradeLabel }}</span>
+    <div class="end-stats">
+      <div class="end-stat">
+        <div class="end-stat-label">Presupuesto final</div>
+        <div class="end-stat-val">{{ dinero }} €</div>
+      </div>
+      <div class="end-stat">
+        <div class="end-stat-label">Rondas jugadas</div>
+        <div class="end-stat-val">{{ maxRondas }}</div>
+      </div>
+    </div>
+    <button class="reset-btn" (click)="reset()">Jugar otra vez</button>
+  </div>
+
+</div>

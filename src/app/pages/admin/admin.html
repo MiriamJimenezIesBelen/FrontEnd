@@ -1,0 +1,93 @@
+<div class="admin-page">
+
+  <div class="admin-header">
+    <h1>Panel de administración</h1>
+    <p class="subtitle">Gestión de empresas registradas</p>
+  </div>
+
+  <!-- TABLA -->
+  <div class="tabla-card" *ngIf="!editando">
+    <table class="tabla-admin">
+      <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Sector</th>
+        <th>País</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let u of usuarios">
+        <td><strong>{{ u.nombre }}</strong></td>
+        <td>{{ u.sector }}</td>
+        <td>{{ u.pais }}</td>
+        <td>
+            <span class="rol-badge" [ngClass]="u.rol === 'ADMIN' ? 'rol-admin' : 'rol-user'">
+              {{ u.rol }}
+            </span>
+        </td>
+        <td class="acciones">
+          <button class="btn-editar" (click)="editar(u)">Editar</button>
+          <button class="btn-eliminar" (click)="eliminar(u.idEmpresa)">Eliminar</button>
+        </td>
+      </tr>
+      <tr *ngIf="usuarios.length === 0">
+        <td colspan="5" class="vacio">No hay empresas registradas</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="total">Total: {{ usuarios.length }} empresas</div>
+  </div>
+
+  <!-- FORMULARIO EDITAR -->
+  <div class="editar-card" *ngIf="editando">
+    <h2>Editar empresa</h2>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" [(ngModel)]="empresaEditando.nombre" name="nombre">
+      </div>
+      <div class="form-group">
+        <label>Sector</label>
+        <input type="text" [(ngModel)]="empresaEditando.sector" name="sector">
+      </div>
+      <div class="form-group">
+        <label>País</label>
+        <input type="text" [(ngModel)]="empresaEditando.pais" name="pais">
+      </div>
+      <div class="form-group">
+        <label>Ciudad</label>
+        <input type="text" [(ngModel)]="empresaEditando.ciudad" name="ciudad">
+      </div>
+      <div class="form-group">
+        <label>Correo</label>
+        <input type="email" [(ngModel)]="empresaEditando.correoContacto" name="correo">
+      </div>
+      <div class="form-group">
+        <label>Tamaño</label>
+        <select [(ngModel)]="empresaEditando.tamano" name="tamano">
+          <option value="pequena">Pequeña</option>
+          <option value="mediana">Mediana</option>
+          <option value="grande">Grande</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="editar-botones">
+      <button class="btn-cancelar" (click)="cancelarEdicion()">Cancelar</button>
+      <button class="btn-guardar" (click)="guardarEdicion()">Guardar cambios</button>
+    </div>
+
+    <div class="mensaje-exito" *ngIf="mensajeExito">✅ Empresa actualizada correctamente</div>
+  </div>
+
+
+
+  <div class="tabla-container">
+    <table class="tabla-admin">
+    </table>
+  </div>
+
+</div>

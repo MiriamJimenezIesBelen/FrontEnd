@@ -1,0 +1,97 @@
+.auth-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f3d3e, #1a5c37);
+
+  /* 👇 sube un poco el card visualmente */
+  padding-top: 40px;
+}
+/* CARD MÁS GRANDE Y PRO */
+.auth-card {
+  width: 450px;
+  background: white;
+
+  padding: 55px 45px;        /* un poco más compacto */
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+
+  /* 👇 lo sube ligeramente dentro del centro */
+  transform: translateY(-20px);
+}
+/* TÍTULO MÁS POTENTE */
+.auth-card h2 {
+  font-size: 2.1rem;
+  margin-bottom: 6px;
+  color: #0f3d3e;
+}
+
+/* SUBTÍTULO */
+.subtitle {
+  font-size: 1rem;
+  color: #64748b;
+  margin-bottom: 25px;
+}
+
+/* INPUTS MÁS GRANDES */
+.auth-card input {
+  width: 100%;
+  padding: 16px 18px;
+  margin-top: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  transition: 0.2s;
+}
+
+.auth-card input:focus {
+  border-color: #2e8b57;
+  box-shadow: 0 0 0 3px rgba(46,139,87,0.15);
+  outline: none;
+}
+
+/* BOTÓN PRINCIPAL */
+.auth-btn {
+  width: 100%;
+  margin-top: 22px;
+  padding: 16px;
+  background: #2e8b57;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.auth-btn:hover {
+  background: #1a5c37;
+  transform: translateY(-2px);
+}
+
+/* VOLVER */
+.auth-back {
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px;
+  background: transparent;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  color: #64748b;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.auth-back:hover {
+  border-color: #2e8b57;
+  color: #2e8b57;
+}
+
+/* ERROR */
+.error {
+  margin-top: 12px;
+  color: #dc2626;
+  font-size: 0.9rem;
+}

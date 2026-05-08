@@ -1,0 +1,54 @@
+<div class="impacto-page">
+
+  <div class="impacto-hero">
+    <div class="hero-tag">🌿 Registro ambiental</div>
+    <h1>Registrar impacto<br>ambiental</h1>
+    <p>Introduce los consumos de tu empresa para hacer seguimiento de tu huella medioambiental.</p>
+  </div>
+
+  <div class="impacto-card">
+    <form (ngSubmit)="guardarImpacto()" class="impacto-form">
+      <div class="form-fields-grid">
+
+        <div class="field-group">
+          <label>⚡ Electricidad</label>
+          <input type="number" [(ngModel)]="impacto.energia" name="energia" placeholder="0" min="0" required>
+          <p class="field-hint">kWh consumidos este período</p>
+        </div>
+
+        <div class="field-group">
+          <label>💧 Agua</label>
+          <input type="number" [(ngModel)]="impacto.agua" name="agua" placeholder="0" min="0" required>
+          <p class="field-hint">Litros utilizados en producción</p>
+        </div>
+
+        <div class="field-group">
+          <label>🌫️ CO₂</label>
+          <input type="number" [(ngModel)]="impacto.co2" name="co2" placeholder="0" min="0" required>
+          <p class="field-hint">Kilogramos de CO₂ emitidos</p>
+        </div>
+
+        <div class="field-group">
+          <label>🗑️ Residuos</label>
+          <input type="number" [(ngModel)]="impacto.residuos" name="residuos" placeholder="0" min="0" required>
+          <p class="field-hint">Kilogramos de residuos generados</p>
+        </div>
+
+      </div>
+      <button type="submit" class="btn-guardar">Guardar registro</button>
+    </form>
+
+    <div class="mensaje-exito" *ngIf="mensajeExito">
+      ✅ Datos guardados correctamente
+    </div>
+  </div>
+
+  <div class="grafico-section">
+    <h3>Evolución de registros</h3>
+    <p>Histórico de tus consumos registrados</p>
+    <canvas id="graficoImpacto"></canvas>
+  </div>
+
+  <a class="btn-volver" routerLink="/dashboard">← Volver al dashboard</a>
+
+</div>

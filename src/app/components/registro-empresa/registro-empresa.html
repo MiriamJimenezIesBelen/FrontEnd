@@ -1,0 +1,55 @@
+<div class="empresa-page">
+
+  <!-- IZQUIERDA: INFO -->
+  <div class="empresa-info">
+    <h1>ImpactoVisible</h1>
+    <p>Registra tu empresa y empieza a medir tu impacto ambiental real.</p>
+
+    <ul>
+      <li>⚡ Análisis automático de eficiencia</li>
+      <li>💧 Control de consumo de agua</li>
+      <li>🌫️ Huella de CO₂</li>
+      <li>🗑️ Gestión de residuos</li>
+      <li>🏆 Ranking ESG</li>
+    </ul>
+  </div>
+
+  <!-- DERECHA: FORM COMPLETO (ANTES + TODOS LOS CAMPOS) -->
+  <div class="empresa-card">
+
+    <h2>Registrar empresa</h2>
+
+    <form (ngSubmit)="onSubmit()" class="registro-form">
+
+      <input type="text" placeholder="Nombre de la empresa">
+
+
+      <input type="text" placeholder="Sector">
+
+      <input type="text" placeholder="País">
+
+      <select>
+        <option value="">Tamaño de empresa</option>
+        <option value="micro">Microempresa  (1–10 empleados)</option>
+        <option value="pequena">Pequeña  (11–50 empleados)</option>
+        <option value="mediana">Mediana  (51–250 empleados)</option>
+        <option value="grande">Gran empresa  (+250 empleados)</option>
+      </select>
+
+      <input type="email" placeholder="Correo contacto">
+
+      <input type="password" placeholder="Contraseña">
+
+
+
+      <button type="submit" class="btn-crear">
+        Crear cuenta
+      </button>
+
+    </form>
+
+    <button class="btn-volver" routerLink="/dashboard">Volver</button>
+
+  </div>
+
+</div>
