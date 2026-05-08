@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Empresa } from '../models/empresa.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class EmpresaService {
-  private url = 'http://localhost:8080/api/empresas';
+  private url = `${environment.apiUrl}/api/empresas`;
 
   constructor(private http: HttpClient) {}
 
@@ -30,11 +31,11 @@ export class EmpresaService {
   }
 
   guardarMedicion(datos: any): Observable<any> {
-    return this.http.post('http://localhost:8080/api/mediciones', datos, { headers: this.getHeaders() });
+    return this.http.post(`${environment.apiUrl}/api/mediciones`, datos, { headers: this.getHeaders() });
   }
 
   getMediciones(idEmpresa: number): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:8080/api/mediciones/empresa/${idEmpresa}`, { headers: this.getHeaders() });
+    return this.http.get<any[]>(`${environment.apiUrl}/api/mediciones/empresa/${idEmpresa}`, { headers: this.getHeaders() });
   }
 
   updateEmpresa(id: number, empresa: any): Observable<any> {
