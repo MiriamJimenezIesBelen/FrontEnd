@@ -22,6 +22,7 @@
   box-sizing: border-box;
 }
 
+/* ── Logo ── */
 .logo-link {
   display: flex;
   align-items: center;
@@ -44,58 +45,87 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  min-width: 0;
+  min-width: 0;         /* permite que el flex-child se encoja */
+  overflow: hidden;     /* FIX: evita que los items desborden el grid */
 }
 
+/* ── Botones flecha ── */
 .scroll-btn {
   background: rgba(10,46,31,0.08);
   border: 1px solid rgba(10,46,31,0.15);
   border-radius: 7px;
   color: #0a2e1f;
-  width: 26px; height: 26px;
-  display: flex; align-items: center; justify-content: center;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.18s;
-  font-size: 16px;
+  flex-shrink: 0;       /* nunca se encoge */
+  transition: background 0.18s, opacity 0.18s, transform 0.18s;
+  font-size: 18px;
   line-height: 1;
   padding: 0;
+  user-select: none;
 }
-.scroll-btn:hover { background: rgba(10,46,31,0.16); }
-.scroll-btn.hidden { opacity: 0; pointer-events: none; }
+.scroll-btn:hover  { background: rgba(10,46,31,0.16); }
+.scroll-btn:active { transform: scale(0.92); }
 
+/* FIX principal: hidden oculta visualmente pero mantiene el espacio
+   con opacity + pointer-events, sin reflow que rompe el cálculo de scroll */
+.scroll-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
+  /* NO usar display:none aquí — causaría un reflow que invalida scrollWidth */
+}
+
+/* ── Wrapper con fade en los bordes ── */
 .nav-scroll-wrap {
   flex: 1;
   position: relative;
   overflow: hidden;
   min-width: 0;
 }
+
+/* Gradientes de fade izq/der */
 .nav-scroll-wrap::before,
 .nav-scroll-wrap::after {
   content: '';
   position: absolute;
   top: 0; bottom: 0;
-  width: 28px;
+  width: 32px;
   z-index: 2;
   pointer-events: none;
   transition: opacity 0.2s;
 }
-.nav-scroll-wrap::before { left: 0; background: linear-gradient(to right, #dce8e0 40%, transparent); }
-.nav-scroll-wrap::after  { right: 0; background: linear-gradient(to left, #dce8e0 40%, transparent); }
+.nav-scroll-wrap::before {
+  left: 0;
+  background: linear-gradient(to right, #dce8e0 40%, transparent);
+}
+.nav-scroll-wrap::after {
+  right: 0;
+  background: linear-gradient(to left, #dce8e0 40%, transparent);
+}
+/* Oculta el fade cuando ya no hay más contenido en esa dirección */
 .nav-scroll-wrap.at-start::before { opacity: 0; }
 .nav-scroll-wrap.at-end::after    { opacity: 0; }
 
+/* ── El nav scrollable real ── */
 .nav-scroll {
   display: flex;
   align-items: center;
   gap: 2px;
-  overflow-x: auto;
+  overflow-x: auto;     /* scroll horizontal activo */
   scrollbar-width: none;
   padding: 0 6px;
   scroll-behavior: smooth;
+  /* FIX: asegura que el scroll funcione dentro del contenedor */
+  width: 100%;
+  box-sizing: border-box;
 }
 .nav-scroll::-webkit-scrollbar { display: none; }
 
+/* ── Links de navegación ── */
 .nav-link {
   color: #2d5a41;
   text-decoration: none;
@@ -104,14 +134,20 @@
   padding: 7px 13px;
   border-radius: 8px;
   white-space: nowrap;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+  transition: color 0.2s ease, background 0.2s ease;
+  flex-shrink: 0;       /* FIX: nunca se encoge para que haya scroll real */
 }
-.nav-link:hover  { color: #0a2e1f; background: rgba(10,46,31,0.1); }
+.nav-link:hover  { color: #0a2e1f; background: rgba(10,46,31,0.10); }
 .nav-link.active { color: #0a2e1f; background: rgba(10,46,31,0.13); font-weight: 700; }
 
 /* ── Acciones derecha ── */
-.nav-actions { display: flex; align-items: center; gap: 10px; justify-self: end; }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: end;
+  flex-shrink: 0;
+}
 
 .btn-outline {
   padding: 7px 16px;
@@ -121,7 +157,7 @@
   font-size: 0.84rem;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
   background: transparent;
   font-family: inherit;
 }
@@ -135,7 +171,7 @@
   font-size: 0.84rem;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
   font-family: inherit;
 }
 .btn-solid:hover { background: #1c5b39; transform: translateY(-1px); }
@@ -148,9 +184,18 @@
   display: flex; align-items: center; justify-content: center;
   color: #7dd9a3;
   font-weight: 800; font-size: 0.88rem;
-  text-transform: uppercase; flex-shrink: 0;
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
-.user-name { color: #0a2e1f; font-size: 0.88rem; font-weight: 700; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-name {
+  color: #0a2e1f;
+  font-size: 0.88rem;
+  font-weight: 700;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .btn-logout {
   background: transparent;
@@ -158,63 +203,98 @@
   color: #5a2020;
   padding: 6px 12px;
   border-radius: 7px;
-  font-size: 0.8rem; font-weight: 600;
-  cursor: pointer; font-family: inherit;
-  transition: all 0.2s ease; white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 .btn-logout:hover { background: rgba(220,38,38,0.08); border-color: #dc2626; color: #dc2626; }
 
 /* ── Hamburguesa ── */
-.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; border-radius: 8px; }
-.hamburger span { display: block; width: 22px; height: 2px; background: #0a2e1f; border-radius: 2px; transition: all 0.3s ease; }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+}
+.hamburger span {
+  display: block;
+  width: 22px; height: 2px;
+  background: #0a2e1f;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
 .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .hamburger.active span:nth-child(2) { opacity: 0; }
 .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ── Nav móvil (drawer) ── */
 .nav-mobile {
-  display: none;
+  display: none;  /* se sobreescribe en el breakpoint */
 }
 .mobile-overlay { display: none; }
 
-/* ── Responsive ── */
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
 @media (max-width: 900px) {
   .header-inner {
     display: flex;
     padding: 0 20px;
   }
 
+  /* Ocultar nav desktop en móvil */
   .nav-desktop-wrap { display: none; }
 
+  /* Drawer lateral */
   .nav-mobile {
-    position: fixed; top: 0; left: 0;
+    position: fixed;
+    top: 0; left: 0;
     width: 280px; height: 100%;
     background: #f2f7f4;
     border-right: 1px solid #c4d9cc;
-    flex-direction: column; align-items: flex-start;
-    padding: 20px 14px 28px; gap: 4px; overflow-y: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 14px 28px;
+    gap: 4px;
+    overflow-y: auto;
     transform: translateX(-100%);
     transition: transform 0.28s ease;
     z-index: 1100;
     box-shadow: 8px 0 28px rgba(0,0,0,0.06);
-    display: flex;
+    display: flex;   /* drawer siempre en el DOM, se mueve con transform */
   }
   .nav-mobile.open { transform: translateX(0); }
   .nav-mobile .nav-link { width: 100%; padding: 11px 14px; font-size: 0.93rem; box-sizing: border-box; }
 
   .nav-close {
-    display: flex; align-self: flex-end;
-    background: none; border: none; font-size: 1rem;
-    color: #6b7280; cursor: pointer; padding: 4px 8px; margin-bottom: 12px;
+    display: flex;
+    align-self: flex-end;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px 8px;
+    margin-bottom: 12px;
   }
 
   .nav-actions { margin-left: auto; }
-  .hamburger { display: flex; }
-  .user-name  { display: none; }
+  .hamburger   { display: flex; }
+  .user-name   { display: none; }
 
   .mobile-overlay {
-    display: block; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.3); z-index: 1099;
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 1099;
     backdrop-filter: blur(2px);
   }
 }

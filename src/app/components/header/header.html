@@ -14,10 +14,17 @@
       <span class="logo-text">ImpactoVisible</span>
     </a>
 
-    <!-- Nav DESKTOP con scroll + flechas (oculto en móvil por CSS) -->
+    <!-- Nav DESKTOP con scroll + flechas -->
     <div class="nav-desktop-wrap" *ngIf="isLoggedIn">
-      <button class="scroll-btn" [class.hidden]="atStart" (click)="scrollNav(-160)" aria-label="Anterior">&#8249;</button>
-      <div class="nav-scroll-wrap" [class.at-start]="atStart" [class.at-end]="atEnd">
+      <button
+        class="scroll-btn"
+        [class.hidden]="atStart"
+        (click)="scrollNav(-160)"
+        aria-label="Anterior">&#8249;</button>
+
+      <div class="nav-scroll-wrap"
+           [class.at-start]="atStart"
+           [class.at-end]="atEnd">
         <nav class="nav-scroll" #navScroll (scroll)="onNavScroll($event)">
           <a routerLink="/dashboard"            class="nav-link" routerLinkActive="active">Dashboard</a>
           <a routerLink="/registro-impacto"     class="nav-link" routerLinkActive="active">Registrar</a>
@@ -31,7 +38,12 @@
           <a routerLink="/ranking"              class="nav-link" routerLinkActive="active">🏆 Ranking</a>
         </nav>
       </div>
-      <button class="scroll-btn" [class.hidden]="atEnd" (click)="scrollNav(160)" aria-label="Siguiente">&#8250;</button>
+
+      <button
+        class="scroll-btn"
+        [class.hidden]="atEnd"
+        (click)="scrollNav(160)"
+        aria-label="Siguiente">&#8250;</button>
     </div>
 
     <!-- Acciones derecha -->
@@ -55,7 +67,7 @@
 
   </div>
 
-  <!-- Nav MÓVIL drawer (oculto en desktop por CSS) -->
+  <!-- Nav MÓVIL drawer -->
   <nav class="nav-mobile" *ngIf="isLoggedIn" [class.open]="menuAbierto">
     <button class="nav-close" (click)="toggleMenu()">✕</button>
     <a routerLink="/dashboard"            class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Dashboard</a>

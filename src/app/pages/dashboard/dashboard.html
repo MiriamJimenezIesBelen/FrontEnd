@@ -23,8 +23,15 @@
     <button routerLink="/registro-impacto" class="btn-primary">+ Registrar datos</button>
   </div>
 
+  <!-- CARGANDO (solo si no hay caché y está esperando al backend) -->
+  <div class="empty-state" *ngIf="cargando">
+    <div class="empty-icon">⏳</div>
+    <h2>Cargando tus datos...</h2>
+    <p>Conectando con el servidor, un momento.</p>
+  </div>
+
   <!-- SIN DATOS -->
-  <div class="empty-state" *ngIf="sinDatos">
+  <div class="empty-state" *ngIf="!cargando && sinDatos">
     <div class="empty-icon">🌱</div>
     <h2>¡Empieza tu camino sostenible!</h2>
     <p>Aún no tienes datos registrados. Comienza por uno de estos pasos:</p>
@@ -48,7 +55,7 @@
   </div>
 
   <!-- CON DATOS -->
-  <div *ngIf="!sinDatos">
+  <div *ngIf="!cargando && !sinDatos">
 
     <!-- KPIs -->
     <div class="kpi-grid">
@@ -92,8 +99,6 @@
 
     <!-- FILA MEDIA: Índice + Gamificación -->
     <div class="mid-row">
-
-      <!-- ÍNDICE -->
       <div class="indice-card">
         <div class="indice-top">
           <div>
@@ -114,7 +119,6 @@
         </div>
       </div>
 
-      <!-- GAMIFICACIÓN -->
       <div class="gami-card">
         <h3>Tu progreso</h3>
         <div class="nivel-row">
@@ -143,7 +147,6 @@
           Sigue registrando datos para desbloquear logros 🏅
         </p>
       </div>
-
     </div>
 
     <!-- INSIGHTS -->

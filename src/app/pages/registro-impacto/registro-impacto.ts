@@ -22,14 +22,18 @@ export class RegistroImpactoComponent implements OnInit, AfterViewInit {
   listaImpactos: any[] = [];
   idEmpresa: number | null = null;
 
+  // Clave única por empresa para aislar datos en sessionStorage
+  private storageKey = 'impactos';
+
   constructor(private empresaService: EmpresaService) {}
 
   ngOnInit() {
-    // Obtener id empresa del localStorage
     const data = localStorage.getItem('usuario');
     if (data) {
       const usuario = JSON.parse(data);
       this.idEmpresa = usuario.idEmpresa;
+      // Clave aislada por empresa
+      this.storageKey = `impactos_empresa_${usuario.idEmpresa ?? usuario.nombre}`;
       if (this.idEmpresa) {
         this.cargarDesdeBD();
       } else {
@@ -57,7 +61,8 @@ export class RegistroImpactoComponent implements OnInit, AfterViewInit {
           residuos: parseFloat(m.residuos)
         }));
 
-        sessionStorage.setItem('impactos', JSON.stringify(this.listaImpactos));
+        // Guardar con clave aislada por empresa
+        sessionStorage.setItem(this.storageKey, JSON.stringify(this.listaImpactos));
 
         setTimeout(() => this.crearGrafico(), 0);
       },
@@ -66,11 +71,9 @@ export class RegistroImpactoComponent implements OnInit, AfterViewInit {
   }
 
   cargarDesdeSession() {
-    const data = sessionStorage.getItem('impactos');
+    const data = sessionStorage.getItem(this.storageKey);
     if (data) {
       this.listaImpactos = JSON.parse(data);
-
-
       setTimeout(() => this.crearGrafico(), 0);
     }
   }
@@ -79,7 +82,6 @@ export class RegistroImpactoComponent implements OnInit, AfterViewInit {
     this.guardando = true;
 
     if (this.idEmpresa) {
-      // Guardar en backend
       const payload = {
         idEmpresa: this.idEmpresa,
         energia:   this.impacto.energia,
@@ -91,13 +93,12 @@ export class RegistroImpactoComponent implements OnInit, AfterViewInit {
       this.empresaService.guardarMedicion(payload).subscribe({
         next: () => {
           this.listaImpactos.push({ ...this.impacto });
-          sessionStorage.setItem('impactos', JSON.stringify(this.listaImpactos));
+          sessionStorage.setItem(this.storageKey, JSON.stringify(this.listaImpactos));
           this.mostrarExito();
           this.crearGrafico();
           this.resetForm();
         },
         error: () => {
-          // Si falla el backend, guardamos en session igualmente
           this.guardarEnSession();
         }
       });
@@ -108,7 +109,7 @@ export class RegistroImpactoComponent implements OnInit, AfterViewInit {
 
   guardarEnSession() {
     this.listaImpactos.push({ ...this.impacto });
-    sessionStorage.setItem('impactos', JSON.stringify(this.listaImpactos));
+    sessionStorage.setItem(this.storageKey, JSON.stringify(this.listaImpactos));
     this.mostrarExito();
     this.crearGrafico();
     this.resetForm();

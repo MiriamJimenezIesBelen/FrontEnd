@@ -1,10 +1,14 @@
 <div class="empresa-page">
 
+  <!-- TOAST -->
+  <div class="toast" *ngIf="toastVisible" [ngClass]="toastTipo === 'success' ? 'toast-success' : 'toast-error'">
+    {{ toastMensaje }}
+  </div>
+
   <!-- IZQUIERDA: INFO -->
   <div class="empresa-info">
     <h1>ImpactoVisible</h1>
     <p>Registra tu empresa y empieza a medir tu impacto ambiental real.</p>
-
     <ul>
       <li>⚡ Análisis automático de eficiencia</li>
       <li>💧 Control de consumo de agua</li>
@@ -14,42 +18,81 @@
     </ul>
   </div>
 
-  <!-- DERECHA: FORM COMPLETO (ANTES + TODOS LOS CAMPOS) -->
+  <!-- DERECHA: FORMULARIO -->
   <div class="empresa-card">
 
     <h2>Registrar empresa</h2>
 
     <form (ngSubmit)="onSubmit()" class="registro-form">
 
-      <input type="text" placeholder="Nombre de la empresa">
+      <input
+        type="text"
+        placeholder="Nombre de la empresa"
+        [(ngModel)]="nuevaEmpresa.nombre"
+        name="nombre"
+        required>
 
+      <input
+        type="text"
+        placeholder="Número de registro (opcional)"
+        [(ngModel)]="nuevaEmpresa.numeroRegistro"
+        name="numeroRegistro">
 
-      <input type="text" placeholder="Sector">
+      <input
+        type="text"
+        placeholder="Sector (ej: Tecnología, Industria…)"
+        [(ngModel)]="nuevaEmpresa.sector"
+        name="sector"
+        required>
 
-      <input type="text" placeholder="País">
+      <input
+        type="text"
+        placeholder="País"
+        [(ngModel)]="nuevaEmpresa.pais"
+        name="pais"
+        required>
 
-      <select>
+      <input
+        type="text"
+        placeholder="Ciudad"
+        [(ngModel)]="nuevaEmpresa.ciudad"
+        name="ciudad">
+
+      <select
+        [(ngModel)]="nuevaEmpresa.tamano"
+        name="tamano"
+        required>
         <option value="">Tamaño de empresa</option>
-        <option value="micro">Microempresa  (1–10 empleados)</option>
-        <option value="pequena">Pequeña  (11–50 empleados)</option>
-        <option value="mediana">Mediana  (51–250 empleados)</option>
-        <option value="grande">Gran empresa  (+250 empleados)</option>
+        <option value="pequena">Pequeña (&lt;50 empleados)</option>
+        <option value="mediana">Mediana (51–250 empleados)</option>
+        <option value="grande">Gran empresa (+250 empleados)</option>
       </select>
 
-      <input type="email" placeholder="Correo contacto">
+      <input
+        type="email"
+        placeholder="Correo de contacto"
+        [(ngModel)]="nuevaEmpresa.correoContacto"
+        name="correoContacto"
+        required>
 
-      <input type="password" placeholder="Contraseña">
+      <input
+        type="password"
+        placeholder="Contraseña"
+        [(ngModel)]="nuevaEmpresa.password"
+        name="password"
+        required>
 
-
-
-      <button type="submit" class="btn-crear">
-        Crear cuenta
+      <button type="submit" class="btn-crear" [disabled]="guardando">
+        {{ guardando ? 'Creando cuenta…' : 'Crear cuenta' }}
       </button>
 
     </form>
 
-    <button class="btn-volver" routerLink="/dashboard">Volver</button>
+    <p class="login-link">
+      ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+    </p>
+
+    <button class="btn-volver" routerLink="/home">← Volver</button>
 
   </div>
-
 </div>

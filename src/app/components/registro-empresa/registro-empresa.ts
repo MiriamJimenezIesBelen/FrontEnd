@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,7 +12,7 @@ import { EmpresaService } from '../../services/empresa';
   templateUrl: './registro-empresa.html',
   styleUrl: './registro-empresa.css'
 })
-export class RegistroEmpresaComponent implements OnInit {
+export class RegistroEmpresaComponent {
 
   nuevaEmpresa: Empresa = {
     numeroRegistro: '',
@@ -25,7 +25,7 @@ export class RegistroEmpresaComponent implements OnInit {
     password: ''
   };
 
-  guardando = false;
+  guardando    = false;
   toastVisible = false;
   toastMensaje = '';
   toastTipo: 'success' | 'error' = 'success';
@@ -35,29 +35,26 @@ export class RegistroEmpresaComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {}
-
-  mostrarToast(mensaje: string, tipo: 'success' | 'error' = 'success') {
-    this.toastMensaje = mensaje;
-    this.toastTipo = tipo;
-    this.toastVisible = true;
-    setTimeout(() => {
-      this.toastVisible = false;
-    }, 3500);
-  }
-
   onSubmit() {
     if (this.guardando) return;
     this.guardando = true;
 
     this.empresaService.saveEmpresa(this.nuevaEmpresa).subscribe({
       next: (data) => {
-        localStorage.setItem('usuario', JSON.stringify(data));
+        // ── Guardar en localStorage con los campos que necesita el dashboard ──
+        // El backend devuelve el objeto Empresa guardado; nos aseguramos
+        // de que idEmpresa esté presente para el storageKey del dashboard.
+        localStorage.setItem('usuario', JSON.stringify({
+          idEmpresa: data.idEmpresa ?? data.id,   // según cómo lo llame tu backend
+          nombre:    data.nombre,
+          sector:    data.sector,
+          rol:       data.rol ?? 'USER'
+        }));
+
         this.guardando = false;
         this.mostrarToast(`✅ ¡Empresa "${this.nuevaEmpresa.nombre}" creada con éxito!`, 'success');
-        setTimeout(() => {
-          this.router.navigate(['/dashboard']);
-        }, 2000);
+
+        setTimeout(() => this.router.navigate(['/dashboard']), 2000);
       },
       error: (err) => {
         console.error('Error al guardar la empresa:', err);
@@ -65,6 +62,13 @@ export class RegistroEmpresaComponent implements OnInit {
         this.mostrarToast('❌ Error al crear la empresa. Comprueba los datos e inténtalo de nuevo.', 'error');
       }
     });
+  }
+
+  private mostrarToast(mensaje: string, tipo: 'success' | 'error' = 'success') {
+    this.toastMensaje  = mensaje;
+    this.toastTipo     = tipo;
+    this.toastVisible  = true;
+    setTimeout(() => { this.toastVisible = false; }, 3500);
   }
 
   limpiarFormulario() {
