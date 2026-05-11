@@ -45,4 +45,16 @@ export class EmpresaService {
   deleteEmpresa(id: number): Observable<any> {
     return this.http.delete(`${this.url}/${id}`, { headers: this.getHeaders() });
   }
+
+  getPlantasByEmpresa(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.url}/${id}/plantas`, { headers: this.getHeaders() });
+  }
+
+  getMedicionesByEmpresa(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/api/mediciones/empresa/${id}`, { headers: this.getHeaders() });
+  }
+
+  createEmpresa(empresa: any): Observable<any> {
+    return this.http.post<any>(`${this.url}/registro`, empresa, { headers: this.getHeaders() });
+  }
 }

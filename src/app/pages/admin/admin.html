@@ -1,93 +1,353 @@
 <div class="admin-page">
 
-  <div class="admin-header">
-    <h1>Panel de administración</h1>
-    <p class="subtitle">Gestión de empresas registradas</p>
+  <!-- NOTIFICACIONES BANNER -->
+  <div class="notif-banner" *ngIf="notificaciones.length > 0">
+    <div class="notif-item" *ngFor="let n of notificaciones" [ngClass]="'notif-' + n.tipo">
+      <span class="notif-icon">{{ n.icono }}</span>
+      <span class="notif-texto">{{ n.texto }}</span>
+      <button class="notif-close" (click)="cerrarNotif(n)">✕</button>
+    </div>
   </div>
 
-  <!-- TABLA -->
-  <div class="tabla-card" *ngIf="!editando">
+  <!-- HEADER -->
+  <div class="admin-header">
+    <div class="admin-header-left">
+      <h1>Panel de administración</h1>
+      <p class="subtitle">Gestión completa de empresas registradas</p>
+    </div>
+    <div class="admin-header-actions">
+      <button class="btn-secondary" (click)="toggleLog()">
+        📋 {{ verLog ? 'Ocultar' : 'Ver' }} actividad
+      </button>
+      <button class="btn-secondary" (click)="abrirCrear()">➕ Nueva empresa</button>
+      <button class="btn-export"    (click)="exportarCSV()">⬇ Exportar CSV</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid" *ngIf="vistaActual === 'tabla'">
+    <div class="stat-card">
+      <div class="stat-icon">🏢</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ usuarios.length }}</span>
+        <span class="stat-label">Total empresas</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">👑</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ contarRol('ADMIN') }}</span>
+        <span class="stat-label">Administradores</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">👤</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ contarRol('USER') }}</span>
+        <span class="stat-label">Usuarios</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🌍</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ contarPaisesUnicos() }}</span>
+        <span class="stat-label">Países distintos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG DE ACTIVIDAD -->
+  <div class="log-card" *ngIf="verLog">
+    <div class="log-header">
+      <h3>📋 Actividad reciente</h3>
+      <button class="btn-text" (click)="limpiarLog()">Limpiar</button>
+    </div>
+    <div class="log-lista">
+      <div class="log-item" *ngFor="let entry of activityLog">
+        <span class="log-hora">{{ entry.hora }}</span>
+        <span class="log-icono">{{ entry.icono }}</span>
+        <span class="log-msg">{{ entry.mensaje }}</span>
+      </div>
+      <div class="log-vacio" *ngIf="activityLog.length === 0">Sin actividad registrada aún.</div>
+    </div>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="graficos-section" *ngIf="vistaActual === 'tabla'">
+    <div class="graficos-grid">
+
+      <div class="grafico-card">
+        <h4 class="grafico-titulo">Por sector</h4>
+        <div class="barras">
+          <div class="barra-row" *ngFor="let item of getGrafico('sector')">
+            <span class="barra-label">{{ item.key }}</span>
+            <div class="barra-wrap">
+              <div class="barra-fill" [style.width.%]="item.pct" [style.background]="item.color"></div>
+            </div>
+            <span class="barra-val">{{ item.count }}</span>
+          </div>
+          <div class="grafico-vacio" *ngIf="getGrafico('sector').length === 0">Sin datos</div>
+        </div>
+      </div>
+
+      <div class="grafico-card">
+        <h4 class="grafico-titulo">Por tamaño</h4>
+        <div class="donut-wrap">
+          <svg class="donut-svg" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="45" fill="none" stroke="#e5ede9" stroke-width="18"/>
+            <circle *ngFor="let seg of getDonutSegments()" cx="60" cy="60" r="45"
+                    fill="none" [attr.stroke]="seg.color" stroke-width="18"
+                    [attr.stroke-dasharray]="seg.dash" [attr.stroke-dashoffset]="seg.offset"
+                    style="transform:rotate(-90deg);transform-origin:50% 50%"/>
+          </svg>
+          <div class="donut-legend">
+            <div class="donut-item" *ngFor="let seg of getDonutSegments()">
+              <span class="donut-dot" [style.background]="seg.color"></span>
+              <span>{{ seg.label }}: <strong>{{ seg.count }}</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grafico-card">
+        <h4 class="grafico-titulo">Por país</h4>
+        <div class="barras">
+          <div class="barra-row" *ngFor="let item of getGrafico('pais')">
+            <span class="barra-label">{{ item.key }}</span>
+            <div class="barra-wrap">
+              <div class="barra-fill" [style.width.%]="item.pct" [style.background]="item.color"></div>
+            </div>
+            <span class="barra-val">{{ item.count }}</span>
+          </div>
+          <div class="grafico-vacio" *ngIf="getGrafico('pais').length === 0">Sin datos</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BUSCADOR Y FILTROS -->
+  <div class="filtros-bar" *ngIf="vistaActual === 'tabla'">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" placeholder="Buscar por nombre, sector, país..."
+             [(ngModel)]="textoBusqueda" (input)="aplicarFiltros()"/>
+      <button class="search-clear" *ngIf="textoBusqueda" (click)="limpiarBusqueda()">✕</button>
+    </div>
+    <select class="filtro-select" [(ngModel)]="filtroRol" (change)="aplicarFiltros()">
+      <option value="">Todos los roles</option>
+      <option value="ADMIN">Admin</option>
+      <option value="USER">User</option>
+    </select>
+    <select class="filtro-select" [(ngModel)]="filtroTamano" (change)="aplicarFiltros()">
+      <option value="">Todos los tamaños</option>
+      <option value="pequena">Pequeña</option>
+      <option value="mediana">Mediana</option>
+      <option value="grande">Grande</option>
+    </select>
+  </div>
+
+  <!-- TABLA PRINCIPAL -->
+  <div class="tabla-card" *ngIf="vistaActual === 'tabla'">
     <table class="tabla-admin">
       <thead>
       <tr>
-        <th>Nombre</th>
-        <th>Sector</th>
-        <th>País</th>
+        <th (click)="ordenarPor('nombre')" class="th-sortable">Nombre <span class="sort-icon">{{ getSortIcon('nombre') }}</span></th>
+        <th (click)="ordenarPor('sector')" class="th-sortable">Sector <span class="sort-icon">{{ getSortIcon('sector') }}</span></th>
+        <th (click)="ordenarPor('pais')"   class="th-sortable">País   <span class="sort-icon">{{ getSortIcon('pais') }}</span></th>
+        <th>Tamaño</th>
         <th>Rol</th>
         <th>Acciones</th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let u of usuarios">
-        <td><strong>{{ u.nombre }}</strong></td>
+      <tr *ngFor="let u of usuariosFiltrados" class="fila-empresa">
+        <td>
+          <div class="empresa-nombre">
+            <div class="empresa-avatar">{{ u.nombre.charAt(0) }}</div>
+            <div>
+              <strong>{{ u.nombre }}</strong>
+              <span class="empresa-ciudad">{{ u.ciudad }}, {{ u.pais }}</span>
+            </div>
+          </div>
+        </td>
         <td>{{ u.sector }}</td>
         <td>{{ u.pais }}</td>
+        <td><span class="tamano-badge tamano-{{ u.tamano }}">{{ u.tamano }}</span></td>
         <td>
-            <span class="rol-badge" [ngClass]="u.rol === 'ADMIN' ? 'rol-admin' : 'rol-user'">
-              {{ u.rol }}
-            </span>
+          <button class="rol-badge rol-toggle" [ngClass]="u.rol === 'ADMIN' ? 'rol-admin' : 'rol-user'"
+                  (click)="toggleRol(u)" [title]="'Cambiar a ' + (u.rol === 'ADMIN' ? 'USER' : 'ADMIN')">
+            {{ u.rol }} <span class="rol-toggle-hint">↕</span>
+          </button>
         </td>
         <td class="acciones">
-          <button class="btn-editar" (click)="editar(u)">Editar</button>
-          <button class="btn-eliminar" (click)="eliminar(u.idEmpresa)">Eliminar</button>
+          <button class="btn-detalle"  (click)="verDetalle(u)"         title="Ver detalle">👁</button>
+          <button class="btn-editar"   (click)="editar(u)">✏ Editar</button>
+          <button class="btn-eliminar" (click)="eliminar(u.idEmpresa)">🗑</button>
         </td>
       </tr>
-      <tr *ngIf="usuarios.length === 0">
-        <td colspan="5" class="vacio">No hay empresas registradas</td>
+      <tr *ngIf="usuariosFiltrados.length === 0">
+        <td colspan="6" class="vacio">
+          <div class="vacio-inner">
+            <span class="vacio-icon">🔎</span>
+            <span>No hay empresas que coincidan con los filtros</span>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>
-    <div class="total">Total: {{ usuarios.length }} empresas</div>
+    <div class="tabla-footer">
+      <span class="total">Mostrando <strong>{{ usuariosFiltrados.length }}</strong> de <strong>{{ usuarios.length }}</strong> empresas</span>
+    </div>
   </div>
 
-  <!-- FORMULARIO EDITAR -->
-  <div class="editar-card" *ngIf="editando">
-    <h2>Editar empresa</h2>
+  <!-- ══════════════ VISTA DETALLE ══════════════ -->
+  <div class="detalle-card" *ngIf="vistaActual === 'detalle' && empresaDetalle">
+    <div class="detalle-topbar">
+      <button class="btn-back" (click)="volverTabla()">← Volver</button>
+    </div>
+    <div class="detalle-hero">
+      <div class="empresa-avatar grande">{{ empresaDetalle.nombre.charAt(0) }}</div>
+      <div class="detalle-hero-info">
+        <h2>{{ empresaDetalle.nombre }}</h2>
+        <span class="detalle-meta">{{ empresaDetalle.sector }} · {{ empresaDetalle.ciudad }}, {{ empresaDetalle.pais }}</span>
+      </div>
+      <span class="rol-badge" [ngClass]="empresaDetalle.rol === 'ADMIN' ? 'rol-admin' : 'rol-user'">{{ empresaDetalle.rol }}</span>
+    </div>
 
+    <div class="detalle-grid">
+      <div class="detalle-bloque">
+        <h4>Datos generales</h4>
+        <div class="detalle-fila"><span>Correo</span><strong>{{ empresaDetalle.correoContacto }}</strong></div>
+        <div class="detalle-fila"><span>Nº registro</span><strong>{{ empresaDetalle.numeroRegistro }}</strong></div>
+        <div class="detalle-fila"><span>Tamaño</span>
+          <strong><span class="tamano-badge tamano-{{ empresaDetalle.tamano }}">{{ empresaDetalle.tamano }}</span></strong>
+        </div>
+        <div class="detalle-fila"><span>País</span><strong>{{ empresaDetalle.pais }}</strong></div>
+      </div>
+
+      <div class="detalle-bloque">
+        <h4>Plantas registradas
+          <span class="detalle-count">{{ plantasDetalle.length }}</span>
+        </h4>
+        <div class="plantas-lista" *ngIf="plantasDetalle.length > 0">
+          <div class="planta-item" *ngFor="let p of plantasDetalle">
+            <span class="planta-icono">🏭</span>
+            <div class="planta-info">
+              <strong>{{ p.nombre }}</strong>
+              <span class="planta-dir">{{ p.direccion }}</span>
+            </div>
+            <span class="planta-codigo">{{ p.codigoPlanta }}</span>
+          </div>
+        </div>
+        <div class="detalle-vacio" *ngIf="plantasDetalle.length === 0">Sin plantas registradas</div>
+      </div>
+
+      <div class="detalle-bloque detalle-full">
+        <h4>Últimas mediciones
+          <span class="detalle-count">{{ medicionesDetalle.length }}</span>
+        </h4>
+        <div class="tabla-container" *ngIf="medicionesDetalle.length > 0">
+          <table class="tabla-mediciones">
+            <thead><tr><th>Fecha</th><th>Tipo</th><th>Valor</th><th>Unidad</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let m of medicionesDetalle">
+              <td>{{ m.fecha }}</td>
+              <td>{{ m.tipoMedicion }}</td>
+              <td><strong>{{ m.valor }}</strong></td>
+              <td>{{ m.unidad }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="detalle-vacio" *ngIf="medicionesDetalle.length === 0">Sin mediciones registradas</div>
+      </div>
+    </div>
+
+    <div class="detalle-actions">
+      <button class="btn-editar"   (click)="editar(empresaDetalle)">✏ Editar empresa</button>
+      <button class="btn-eliminar" (click)="eliminar(empresaDetalle.idEmpresa)">🗑 Eliminar</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODAL CREAR ══════════════ -->
+  <div class="modal-overlay" *ngIf="vistaActual === 'crear'" (click)="cerrarCrear()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>➕ Nueva empresa</h2>
+        <button class="modal-close" (click)="cerrarCrear()">✕</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Nombre *</label><input type="text"     [(ngModel)]="nuevaEmpresa.nombre"          placeholder="Nombre empresa"></div>
+        <div class="form-group"><label>Sector *</label><input type="text"     [(ngModel)]="nuevaEmpresa.sector"          placeholder="Tecnología, Industria..."></div>
+        <div class="form-group"><label>País *</label>  <input type="text"     [(ngModel)]="nuevaEmpresa.pais"            placeholder="España"></div>
+        <div class="form-group"><label>Ciudad</label>  <input type="text"     [(ngModel)]="nuevaEmpresa.ciudad"          placeholder="Madrid"></div>
+        <div class="form-group"><label>Correo *</label><input type="email"    [(ngModel)]="nuevaEmpresa.correoContacto"  placeholder="empresa@email.com"></div>
+        <div class="form-group"><label>Contraseña *</label><input type="password" [(ngModel)]="nuevaEmpresa.password"   placeholder="Mínimo 6 caracteres"></div>
+        <div class="form-group"><label>Nº Registro</label><input type="text"  [(ngModel)]="nuevaEmpresa.numeroRegistro" placeholder="REG-001"></div>
+        <div class="form-group">
+          <label>Tamaño</label>
+          <select [(ngModel)]="nuevaEmpresa.tamano">
+            <option value="pequena">Pequeña</option>
+            <option value="mediana">Mediana</option>
+            <option value="grande">Grande</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Rol</label>
+          <select [(ngModel)]="nuevaEmpresa.rol">
+            <option value="USER">USER</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </div>
+      </div>
+      <div class="editar-botones">
+        <button class="btn-cancelar" (click)="cerrarCrear()">Cancelar</button>
+        <button class="btn-guardar"  (click)="crearEmpresa()">Crear empresa</button>
+      </div>
+      <div class="mensaje-exito" *ngIf="mensajeExito">✅ Empresa creada correctamente</div>
+      <div class="mensaje-error"  *ngIf="mensajeError">❌ Error al crear la empresa</div>
+    </div>
+  </div>
+
+  <!-- ══════════════ FORMULARIO EDITAR ══════════════ -->
+  <div class="editar-card" *ngIf="vistaActual === 'editar'">
+    <div class="editar-header">
+      <button class="btn-back" (click)="cancelarEdicion()">← Volver</button>
+      <div>
+        <h2>Editar empresa</h2>
+        <span class="editar-subtitle">{{ empresaEditando.nombre }}</span>
+      </div>
+    </div>
     <div class="form-grid">
-      <div class="form-group">
-        <label>Nombre</label>
-        <input type="text" [(ngModel)]="empresaEditando.nombre" name="nombre">
-      </div>
-      <div class="form-group">
-        <label>Sector</label>
-        <input type="text" [(ngModel)]="empresaEditando.sector" name="sector">
-      </div>
-      <div class="form-group">
-        <label>País</label>
-        <input type="text" [(ngModel)]="empresaEditando.pais" name="pais">
-      </div>
-      <div class="form-group">
-        <label>Ciudad</label>
-        <input type="text" [(ngModel)]="empresaEditando.ciudad" name="ciudad">
-      </div>
-      <div class="form-group">
-        <label>Correo</label>
-        <input type="email" [(ngModel)]="empresaEditando.correoContacto" name="correo">
-      </div>
+      <div class="form-group"><label>Nombre</label>      <input type="text"  [(ngModel)]="empresaEditando.nombre"></div>
+      <div class="form-group"><label>Sector</label>      <input type="text"  [(ngModel)]="empresaEditando.sector"></div>
+      <div class="form-group"><label>País</label>        <input type="text"  [(ngModel)]="empresaEditando.pais"></div>
+      <div class="form-group"><label>Ciudad</label>      <input type="text"  [(ngModel)]="empresaEditando.ciudad"></div>
+      <div class="form-group"><label>Correo</label>      <input type="email" [(ngModel)]="empresaEditando.correoContacto"></div>
+      <div class="form-group"><label>Nº Registro</label> <input type="text"  [(ngModel)]="empresaEditando.numeroRegistro"></div>
       <div class="form-group">
         <label>Tamaño</label>
-        <select [(ngModel)]="empresaEditando.tamano" name="tamano">
+        <select [(ngModel)]="empresaEditando.tamano">
           <option value="pequena">Pequeña</option>
           <option value="mediana">Mediana</option>
           <option value="grande">Grande</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>Rol</label>
+        <select [(ngModel)]="empresaEditando.rol">
+          <option value="USER">USER</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+      </div>
     </div>
-
     <div class="editar-botones">
       <button class="btn-cancelar" (click)="cancelarEdicion()">Cancelar</button>
-      <button class="btn-guardar" (click)="guardarEdicion()">Guardar cambios</button>
+      <button class="btn-guardar"  (click)="guardarEdicion()">Guardar cambios</button>
     </div>
-
     <div class="mensaje-exito" *ngIf="mensajeExito">✅ Empresa actualizada correctamente</div>
-  </div>
-
-
-
-  <div class="tabla-container">
-    <table class="tabla-admin">
-    </table>
+    <div class="mensaje-error"  *ngIf="mensajeError">❌ Error al guardar los cambios</div>
   </div>
 
 </div>
