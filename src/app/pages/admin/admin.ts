@@ -45,7 +45,6 @@ export class AdminComponent implements OnInit {
   usuariosFiltrados:  any[] = [];
   empresaEditando:    any   = {};
   empresaDetalle:     any   = null;
-  plantasDetalle:     any[] = [];
   medicionesDetalle:  any[] = [];
   nuevaEmpresa:       any   = this.empresaVacia();
 
@@ -307,25 +306,13 @@ export class AdminComponent implements OnInit {
 
   verDetalle(empresa: any) {
     this.empresaDetalle    = empresa;
-    this.plantasDetalle    = [];
     this.medicionesDetalle = [];
     this.vistaActual       = 'detalle';
 
-    // Carga plantas si el servicio lo soporta
-    if (this.empresaService.getPlantasByEmpresa) {
-      this.empresaService.getPlantasByEmpresa(empresa.idEmpresa).subscribe({
-        next: (p: any[]) => { this.plantasDetalle = p; this.cdr.detectChanges(); },
-        error: () => {},
-      });
-    }
-
-    // Carga mediciones si el servicio lo soporta
-    if (this.empresaService.getMedicionesByEmpresa) {
-      this.empresaService.getMedicionesByEmpresa(empresa.idEmpresa).subscribe({
-        next: (m: any[]) => { this.medicionesDetalle = m.slice(0, 10); this.cdr.detectChanges(); },
-        error: () => {},
-      });
-    }
+    this.empresaService.getMedicionesByEmpresa(empresa.idEmpresa).subscribe({
+      next: (m: any[]) => { this.medicionesDetalle = m.slice(0, 10); this.cdr.detectChanges(); },
+      error: () => { this.medicionesDetalle = []; },
+    });
 
     this.registrarLog('👁', `Vista detalle: "${empresa.nombre}"`);
   }

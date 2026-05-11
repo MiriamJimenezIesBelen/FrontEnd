@@ -216,31 +216,18 @@
     </div>
 
     <div class="detalle-grid">
-      <div class="detalle-bloque">
+      <div class="detalle-bloque detalle-full detalle-datos">
         <h4>Datos generales</h4>
-        <div class="detalle-fila"><span>Correo</span><strong>{{ empresaDetalle.correoContacto }}</strong></div>
-        <div class="detalle-fila"><span>Nº registro</span><strong>{{ empresaDetalle.numeroRegistro }}</strong></div>
-        <div class="detalle-fila"><span>Tamaño</span>
-          <strong><span class="tamano-badge tamano-{{ empresaDetalle.tamano }}">{{ empresaDetalle.tamano }}</span></strong>
-        </div>
-        <div class="detalle-fila"><span>País</span><strong>{{ empresaDetalle.pais }}</strong></div>
-      </div>
-
-      <div class="detalle-bloque">
-        <h4>Plantas registradas
-          <span class="detalle-count">{{ plantasDetalle.length }}</span>
-        </h4>
-        <div class="plantas-lista" *ngIf="plantasDetalle.length > 0">
-          <div class="planta-item" *ngFor="let p of plantasDetalle">
-            <span class="planta-icono">🏭</span>
-            <div class="planta-info">
-              <strong>{{ p.nombre }}</strong>
-              <span class="planta-dir">{{ p.direccion }}</span>
-            </div>
-            <span class="planta-codigo">{{ p.codigoPlanta }}</span>
+        <div class="detalle-filas-wrap">
+          <div class="detalle-fila"><span>Correo</span><strong>{{ empresaDetalle.correoContacto }}</strong></div>
+          <div class="detalle-fila"><span>Nº registro</span><strong>{{ empresaDetalle.numeroRegistro }}</strong></div>
+          <div class="detalle-fila"><span>Ciudad</span><strong>{{ empresaDetalle.ciudad }}</strong></div>
+          <div class="detalle-fila"><span>País</span><strong>{{ empresaDetalle.pais }}</strong></div>
+          <div class="detalle-fila"><span>Tamaño</span>
+            <strong><span class="tamano-badge tamano-{{ empresaDetalle.tamano }}">{{ empresaDetalle.tamano }}</span></strong>
           </div>
+          <div class="detalle-fila"><span>Sector</span><strong>{{ empresaDetalle.sector }}</strong></div>
         </div>
-        <div class="detalle-vacio" *ngIf="plantasDetalle.length === 0">Sin plantas registradas</div>
       </div>
 
       <div class="detalle-bloque detalle-full">
@@ -249,13 +236,13 @@
         </h4>
         <div class="tabla-container" *ngIf="medicionesDetalle.length > 0">
           <table class="tabla-mediciones">
-            <thead><tr><th>Fecha</th><th>Tipo</th><th>Valor</th><th>Unidad</th></tr></thead>
+            <thead><tr><th>Código</th><th>Fecha</th><th>Tipo</th><th>Valor</th></tr></thead>
             <tbody>
             <tr *ngFor="let m of medicionesDetalle">
+              <td>{{ m.codigoMedicion }}</td>
               <td>{{ m.fecha }}</td>
-              <td>{{ m.tipoMedicion }}</td>
+              <td><span class="tipo-badge">{{ m.tipo }}</span></td>
               <td><strong>{{ m.valor }}</strong></td>
-              <td>{{ m.unidad }}</td>
             </tr>
             </tbody>
           </table>
