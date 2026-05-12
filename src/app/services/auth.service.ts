@@ -37,6 +37,13 @@ export class AuthService {
   }
 
   getStorageKey(): string {
-    return 'usuario';
+
+    const usuario = this.getUser();
+
+    if (!usuario) {
+      return 'impactos';
+    }
+
+    return `impactos_empresa_${usuario.idEmpresa ?? usuario.nombre}`;
   }
 }
