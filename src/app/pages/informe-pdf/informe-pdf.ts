@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { Chart } from 'chart.js/auto';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-informe-pdf',
@@ -38,25 +39,32 @@ export class InformePdfComponent implements OnInit {
 
   grafico: any;
 
+  // CORREGIDO: inyectar AuthService para obtener la clave correcta
+  constructor(private auth: AuthService) {}
+
   ngOnInit() {
-    // Fecha de hoy formateada
     const hoy = new Date();
     this.fechaHoy = hoy.toLocaleDateString('es-ES', {
       day: '2-digit', month: 'long', year: 'numeric'
     });
 
     // Usuario
-    const usuarioData = localStorage.getItem('usuario');
-    if (usuarioData) {
-      const u = JSON.parse(usuarioData);
+    const u = this.auth.getUser();
+    if (u) {
       this.nombreEmpresa = u.nombre || 'Empresa';
       this.sectorEmpresa = u.sector || '';
     }
 
-    // Impactos
-    const data = sessionStorage.getItem('impactos');
+    // CORREGIDO: leer la clave correcta por empresa en lugar de la fija 'impactos'
+    const storageKey = this.auth.getStorageKey();
+    const data = sessionStorage.getItem(storageKey);
+
     if (data) {
-      this.impactos = JSON.parse(data);
+      try {
+        this.impactos = JSON.parse(data);
+      } catch (_) {
+        this.impactos = [];
+      }
     }
 
     if (!this.impactos.length) {
@@ -136,8 +144,8 @@ export class InformePdfComponent implements OnInit {
         datasets: [
           { label: 'Energía (kWh)', data: this.impactos.map(i => i.energia),  backgroundColor: 'rgba(245,158,11,0.8)' },
           { label: 'Agua (L)',      data: this.impactos.map(i => i.agua),     backgroundColor: 'rgba(59,130,246,0.8)' },
-          { label: 'CO₂ (kg)',     data: this.impactos.map(i => i.co2),      backgroundColor: 'rgba(107,114,128,0.8)' },
-          { label: 'Residuos (kg)',data: this.impactos.map(i => i.residuos), backgroundColor: 'rgba(16,185,129,0.8)' }
+          { label: 'CO₂ (kg)',      data: this.impactos.map(i => i.co2),      backgroundColor: 'rgba(107,114,128,0.8)' },
+          { label: 'Residuos (kg)', data: this.impactos.map(i => i.residuos), backgroundColor: 'rgba(16,185,129,0.8)' }
         ]
       },
       options: {
@@ -149,11 +157,9 @@ export class InformePdfComponent implements OnInit {
   }
 
   async generarPDF() {
-    // Cogemos el html que queremos convertir
     const elemento = document.getElementById('contenido-pdf');
     if (!elemento) return;
 
-    // Covertimos el html en imagen
     const canvas = await html2canvas(elemento, {
       scale: 2,
       useCORS: true,
@@ -161,8 +167,7 @@ export class InformePdfComponent implements OnInit {
     });
 
     const imgData = canvas.toDataURL('image/png');
-    // Creamos el pdf
-    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdf     = new jsPDF('p', 'mm', 'a4');
 
     const pdfAncho  = pdf.internal.pageSize.getWidth();
     const pdfAlto   = pdf.internal.pageSize.getHeight();
@@ -172,11 +177,9 @@ export class InformePdfComponent implements OnInit {
     const ratio     = pdfAncho / imgAncho;
     const altoTotal = imgAlto * ratio;
 
-    // Si el contenido cabe en una página
     if (altoTotal <= pdfAlto) {
       pdf.addImage(imgData, 'PNG', 0, 0, pdfAncho, altoTotal);
     } else {
-      // Dividir en páginas
       let posY = 0;
       while (posY < altoTotal) {
         pdf.addImage(imgData, 'PNG', 0, -posY, pdfAncho, altoTotal);
@@ -185,7 +188,6 @@ export class InformePdfComponent implements OnInit {
       }
     }
 
-    // guardar archivo
     const nombreArchivo = `informe-sostenibilidad-${this.nombreEmpresa.toLowerCase().replace(/\s/g, '-')}.pdf`;
     pdf.save(nombreArchivo);
   }
