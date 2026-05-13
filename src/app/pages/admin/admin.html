@@ -236,13 +236,22 @@
         </h4>
         <div class="tabla-container" *ngIf="medicionesDetalle.length > 0">
           <table class="tabla-mediciones">
-            <thead><tr><th>Código</th><th>Fecha</th><th>Tipo</th><th>Valor</th></tr></thead>
+            <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>⚡ Energía (kWh)</th>
+              <th>💧 Agua (L)</th>
+              <th>🌫️ CO₂ (kg)</th>
+              <th>🗑️ Residuos (kg)</th>
+            </tr>
+            </thead>
             <tbody>
             <tr *ngFor="let m of medicionesDetalle">
-              <td>{{ m.codigoMedicion }}</td>
               <td>{{ m.fecha }}</td>
-              <td><span class="tipo-badge">{{ m.tipo }}</span></td>
-              <td><strong>{{ m.valor }}</strong></td>
+              <td><strong>{{ m.energia }}</strong></td>
+              <td><strong>{{ m.agua }}</strong></td>
+              <td><strong>{{ m.co2 }}</strong></td>
+              <td><strong>{{ m.residuos }}</strong></td>
             </tr>
             </tbody>
           </table>
