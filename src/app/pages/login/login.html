@@ -10,20 +10,27 @@
     <input
       type="email"
       [(ngModel)]="correo"
-      placeholder="Correo empresarial">
+      placeholder="Correo empresarial"
+      [disabled]="cargando">
 
     <input
       type="password"
       [(ngModel)]="password"
-      placeholder="Contraseña">
+      placeholder="Contraseña"
+      [disabled]="cargando">
 
-    <button class="auth-btn" (click)="login()">
-      Iniciar sesión
+    <button class="auth-btn" (click)="login()" [disabled]="cargando">
+      <span *ngIf="!cargando">Iniciar sesión</span>
+      <span *ngIf="cargando">⏳ Conectando...</span>
     </button>
+
+    <p class="aviso-render" *ngIf="cargando">
+      El servidor puede tardar hasta 1 minuto en arrancar si lleva un rato inactivo.
+    </p>
 
     <p class="error" *ngIf="error">Credenciales incorrectas</p>
 
-    <button class="auth-back" routerLink="/home">
+    <button class="auth-back" routerLink="/home" [disabled]="cargando">
       ← Volver
     </button>
 

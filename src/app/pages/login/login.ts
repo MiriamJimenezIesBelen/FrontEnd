@@ -1,11 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EmpresaService } from '../../services/empresa';
 import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-login',
@@ -14,16 +12,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   correo = '';
   password = '';
   error = false;
+  cargando = false; // NUEVO
 
   constructor(private router: Router,
               private empresaService: EmpresaService,
-              private auth: AuthService) {
-  }
+              private auth: AuthService) {}
 
   ngOnInit() {
     if (this.auth.isLogged()) {
@@ -32,13 +30,12 @@ export class LoginComponent {
   }
 
   login() {
+    this.error = false;
+    this.cargando = true; // NUEVO: activar spinner al pulsar
 
-    // esto hace una peticion al backend
     this.empresaService.login(this.correo, this.password).subscribe({
       next: (response) => {
-        // Guarda el token y los datos del usuario
         localStorage.setItem('token', response.token);
-        // Si todo va bien el backend develve un token
         localStorage.setItem('usuario', JSON.stringify({
           idEmpresa: response.idEmpresa,
           nombre:    response.nombre,
@@ -55,6 +52,7 @@ export class LoginComponent {
         }
       },
       error: () => {
+        this.cargando = false; // NUEVO: apagar spinner si hay error
         this.error = true;
       }
     });
