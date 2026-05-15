@@ -57,4 +57,11 @@ export class EmpresaService {
   createEmpresa(empresa: any): Observable<any> {
     return this.http.post<any>(`${this.url}/registro`, empresa, { headers: this.getHeaders() });
   }
+
+  eliminarMedicionPorFecha(idEmpresa: number, fecha: string): Observable<any> {
+    return this.http.delete(
+      `${environment.apiUrl}/api/mediciones/empresa/${idEmpresa}/fecha/${fecha}`,
+      { headers: this.getHeaders() }
+    );
+  }
 }

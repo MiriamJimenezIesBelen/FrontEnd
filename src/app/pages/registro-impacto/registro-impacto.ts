@@ -92,18 +92,22 @@ export class RegistroImpactoComponent implements OnInit, AfterViewInit {
 
       this.empresaService.guardarMedicion(payload).subscribe({
         next: () => {
+          // Guardar en session SOLO como cache, no como fuente de verdad
           this.listaImpactos.push({ ...this.impacto });
           sessionStorage.setItem(this.storageKey, JSON.stringify(this.listaImpactos));
           this.mostrarExito();
           this.crearGrafico();
           this.resetForm();
         },
-        error: () => {
-          this.guardarEnSession();
+        error: (err) => {
+          console.error('Error al guardar en BD:', err);
+          this.guardando = false;
+          // NO guardar en session si hay error — muestra error al usuario
+          alert('Error al guardar. Comprueba tu conexión.');
         }
       });
     } else {
-      this.guardarEnSession();
+      this.guardarEnSession(); // Solo si no hay cuenta
     }
   }
 
