@@ -6,13 +6,25 @@
     <p>
       Calcula el impacto ambiental por unidad producida usando tus datos registrados.
     </p>
-
     <div class="calc-badges">
       <span>⚡ análisis automático</span>
       <span>🌍 impacto por unidad</span>
       <span>📊 métricas ESG</span>
     </div>
   </header>
+
+  <!-- EXPLICACIÓN DE USO -->
+  <div class="calc-info-box">
+    <div class="calc-info-icon">ℹ️</div>
+    <div class="calc-info-texto">
+      <strong>¿Cómo funciona?</strong>
+      <p>
+        Introduce el número total de unidades que has producido (productos fabricados, pedidos enviados, servicios prestados…).
+        La calculadora tomará todos tus consumos registrados y los dividirá entre ese número,
+        dándote el impacto ambiental exacto por cada unidad producida.
+      </p>
+    </div>
+  </div>
 
   <!-- INPUT SIMPLE -->
   <section class="calc-form-card">
@@ -23,12 +35,20 @@
         <label>Unidades producidas</label>
         <input type="number"
                [(ngModel)]="unidades"
-               placeholder="Ej: 5000">
+               placeholder="Ej: 5000 productos, pedidos o servicios">
+        <span class="form-hint">
+          Pon el total de productos fabricados, pedidos enviados o servicios prestados durante el período registrado.
+          Puede ser cualquier unidad que use tu empresa (piezas, toneladas, clientes, envíos…).
+        </span>
       </div>
 
       <div class="form-group">
-        <label>Mes de análisis</label>
+        <label>Mes de análisis <span class="label-opcional">(opcional)</span></label>
         <input type="month" [(ngModel)]="mes">
+        <span class="form-hint">
+          Filtra los registros por mes si quieres analizar un período concreto.
+          Si lo dejas vacío, se usarán todos los registros disponibles.
+        </span>
       </div>
 
     </div>
@@ -36,7 +56,7 @@
     <button class="btn-primary"
             (click)="calcular()"
             [disabled]="!unidades || unidades <= 0">
-      Calcular eficiencia
+      Calcular eficiencia por unidad
     </button>
 
   </section>
@@ -44,62 +64,59 @@
   <!-- WARNING -->
   <div class="alert-warning" *ngIf="sinDatos">
     ⚠️ No hay datos de impacto registrados.
-    <a routerLink="/registro-impacto">Registrar consumos</a>
+    <a routerLink="/registro-impacto">Registrar consumos primero</a>
   </div>
 
   <!-- RESULTS -->
   <section class="results" *ngIf="calculado && !sinDatos">
 
     <h2 class="section-title">Impacto por unidad producida</h2>
+    <p class="results-sub">Cada métrica muestra el consumo dividido entre las <strong>{{ unidades | number:'1.0-0' }}</strong> unidades introducidas</p>
 
     <div class="metrics-grid">
 
       <div class="metric-card">
         <span class="icon">⚡</span>
-        <span class="label">Energía</span>
+        <span class="label">Energía por unidad</span>
         <div class="value">
           {{ eficienciaEnergia | number:'1.2-2' }}
           <small>kWh / unidad</small>
         </div>
-        <span class="badge" [ngClass]="semEnergia">
-          {{ textoSemEnergia }}
-        </span>
+        <span class="badge" [ngClass]="semEnergia">{{ textoSemEnergia }}</span>
+        <p class="metric-explain">Kilovatios hora de electricidad consumidos para producir cada unidad</p>
       </div>
 
       <div class="metric-card">
         <span class="icon">💧</span>
-        <span class="label">Agua</span>
+        <span class="label">Agua por unidad</span>
         <div class="value">
           {{ eficienciaAgua | number:'1.2-2' }}
           <small>L / unidad</small>
         </div>
-        <span class="badge" [ngClass]="semAgua">
-          {{ textoSemAgua }}
-        </span>
+        <span class="badge" [ngClass]="semAgua">{{ textoSemAgua }}</span>
+        <p class="metric-explain">Litros de agua utilizados en el proceso de cada unidad producida</p>
       </div>
 
       <div class="metric-card">
         <span class="icon">🌫️</span>
-        <span class="label">CO₂</span>
+        <span class="label">CO₂ por unidad</span>
         <div class="value">
           {{ eficienciaCo2 | number:'1.2-2' }}
           <small>kg / unidad</small>
         </div>
-        <span class="badge" [ngClass]="semCo2">
-          {{ textoSemCo2 }}
-        </span>
+        <span class="badge" [ngClass]="semCo2">{{ textoSemCo2 }}</span>
+        <p class="metric-explain">Kilogramos de CO₂ emitidos a la atmósfera por cada unidad fabricada</p>
       </div>
 
       <div class="metric-card">
         <span class="icon">🗑️</span>
-        <span class="label">Residuos</span>
+        <span class="label">Residuos por unidad</span>
         <div class="value">
           {{ eficienciaResiduos | number:'1.2-2' }}
           <small>kg / unidad</small>
         </div>
-        <span class="badge" [ngClass]="semResiduos">
-          {{ textoSemResiduos }}
-        </span>
+        <span class="badge" [ngClass]="semResiduos">{{ textoSemResiduos }}</span>
+        <p class="metric-explain">Kilogramos de residuos generados en la producción de cada unidad</p>
       </div>
 
     </div>
@@ -113,7 +130,7 @@
   </section>
 
   <button class="btn-secondary" routerLink="/dashboard">
-    ← Volver
+    ← Volver al dashboard
   </button>
 
 </div>

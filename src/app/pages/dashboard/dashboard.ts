@@ -208,31 +208,36 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   calcularKPIs() {
     const n = this.impactos.length;
 
-    this.totalEnergia  = this.impactos.reduce((s, i) => s + (i.energia  || 0), 0);
-    this.totalAgua     = this.impactos.reduce((s, i) => s + (i.agua     || 0), 0);
-    this.totalCo2      = this.impactos.reduce((s, i) => s + (i.co2      || 0), 0);
+    this.totalEnergia  = this.impactos.reduce((s, i) => s + (i.energia || 0), 0);
+    this.totalAgua     = this.impactos.reduce((s, i) => s + (i.agua || 0), 0);
+    this.totalCo2      = this.impactos.reduce((s, i) => s + (i.co2 || 0), 0);
     this.totalResiduos = this.impactos.reduce((s, i) => s + (i.residuos || 0), 0);
 
-    const refE = 1200 * n;
-    const refA = 5000 * n;
-    const refC = 500  * n;
-    const refR = 300  * n;
+    if (n === 0) return;
 
-    this.badgeEnergia  = this.calcBadge(this.totalEnergia,  refE);
-    this.badgeAgua     = this.calcBadge(this.totalAgua,     refA);
-    this.badgeCo2      = this.calcBadge(this.totalCo2,      refC);
-    this.badgeResiduos = this.calcBadge(this.totalResiduos, refR);
+    const avgE = this.totalEnergia / n;
+    const avgA = this.totalAgua / n;
+    const avgC = this.totalCo2 / n;
+    const avgR = this.totalResiduos / n;
+
+    // 🔥 BADGES (AHORA BASADO EN PROMEDIO, NO TOTAL)
+    this.badgeEnergia  = this.calcBadge(avgE, 1500);
+    this.badgeAgua     = this.calcBadge(avgA, 6000);
+    this.badgeCo2      = this.calcBadge(avgC, 700);
+    this.badgeResiduos = this.calcBadge(avgR, 400);
 
     this.textoEnergia  = this.textoEstado(this.badgeEnergia);
     this.textoAgua     = this.textoEstado(this.badgeAgua);
     this.textoCo2      = this.textoEstado(this.badgeCo2);
     this.textoResiduos = this.textoEstado(this.badgeResiduos);
 
-    this.barEnergia  = Math.min(100, Math.max(0, Math.round((this.totalEnergia  / refE) * 100)));
-    this.barAgua     = Math.min(100, Math.max(0, Math.round((this.totalAgua     / refA) * 100)));
-    this.barCo2      = Math.min(100, Math.max(0, Math.round((this.totalCo2      / refC) * 100)));
-    this.barResiduos = Math.min(100, Math.max(0, Math.round((this.totalResiduos / refR) * 100)));
+    // 📊 BARRAS (CORRECTAS)
+    this.barEnergia  = Math.min(100, Math.round((avgE / 1500) * 100));
+    this.barAgua     = Math.min(100, Math.round((avgA / 6000) * 100));
+    this.barCo2      = Math.min(100, Math.round((avgC / 700) * 100));
+    this.barResiduos = Math.min(100, Math.round((avgR / 400) * 100));
   }
+
 
   calcularTrends() {
     if (this.impactos.length < 2) return;
@@ -293,29 +298,34 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   calcularGamificacion() {
-    this.puntos   = this.gamificacionService.calcularPuntos(this.impactos);
+    this.puntos = this.gamificacionService.calcularPuntos(this.impactos);
     this.medallas = this.gamificacionService.obtenerMedallas(this.puntos, this.impactos);
-    this.nivel    = this.gamificacionService.calcularNivel(this.puntos);
-    this.rankingService.guardarPuntuacion(this.nombreEmpresa, this.puntos);
+    this.nivel = this.gamificacionService.calcularNivel(this.puntos);
+
+    // 🔥 AQUÍ ES DONDE SE GUARDA EL RANKING
+    this.guardarRanking();
 
     if (this.nivel === 'Oro') {
-      this.nivelIcono          = '🥇';
-      this.puntosNivelActual   = 600;
-      this.puntosNivelSiguiente= 600;
-      this.progresoNivel       = 100;
+      this.nivelIcono = '🥇';
+      this.puntosNivelActual = 600;
+      this.puntosNivelSiguiente = 600;
+      this.progresoNivel = 100;
+
     } else if (this.nivel === 'Plata') {
-      this.nivelIcono          = '🥈';
-      this.puntosNivelActual   = 300;
-      this.puntosNivelSiguiente= 600;
-      this.progresoNivel       = Math.min(100, Math.max(0, Math.round(((this.puntos - 300) / 300) * 100)));
+      this.nivelIcono = '🥈';
+      this.puntosNivelActual = 300;
+      this.puntosNivelSiguiente = 600;
+      this.progresoNivel =
+        Math.min(100, Math.max(0, Math.round(((this.puntos - 300) / 300) * 100)));
+
     } else {
-      this.nivelIcono          = '🥉';
-      this.puntosNivelActual   = 0;
-      this.puntosNivelSiguiente= 300;
-      this.progresoNivel       = Math.min(100, Math.max(0, Math.round((this.puntos / 300) * 100)));
+      this.nivelIcono = '🥉';
+      this.puntosNivelActual = 0;
+      this.puntosNivelSiguiente = 300;
+      this.progresoNivel =
+        Math.min(100, Math.max(0, Math.round((this.puntos / 300) * 100)));
     }
   }
-
   calcBadge(valor: number, ref: number): string {
     if (valor <= ref * 0.8) return 'badge-verde';
     if (valor <= ref)       return 'badge-amarillo';
@@ -416,6 +426,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { position: 'bottom' } }
       }
     });
@@ -451,5 +462,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     a.href = window.URL.createObjectURL(blob);
     a.download = `impactos_${this.nombreEmpresa}.csv`;
     a.click();
+  }
+
+  private guardarRanking() {
+    if (!this.nombreEmpresa) return;
+
+    this.rankingService.guardarPuntuacion(this.nombreEmpresa, this.puntos);
+    this.rankingService.guardarPuntuacionBackend(this.nombreEmpresa, this.puntos)
+      .subscribe({
+        error: (e) => console.error('Error guardando ranking backend', e)
+      });
   }
 }

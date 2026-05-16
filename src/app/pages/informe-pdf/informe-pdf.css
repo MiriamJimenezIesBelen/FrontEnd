@@ -1,170 +1,305 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 .informe-page {
-  font-family: 'DM Sans', sans-serif;
-  max-width: 900px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 20px 20px 60px;
+  padding: 32px 24px 80px;
   color: #1a1a2e;
 }
 
-.informe-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-.informe-header h1 { font-size: 2rem; font-weight: 700; color: #2e8b57; margin-bottom: 8px; }
-.informe-header p  { color: #666; }
+/* ── HEADER PÁGINA ── */
+.informe-header        { text-align: center; margin-bottom: 32px; }
+.informe-header-icon   { font-size: 2.5rem; margin-bottom: 10px; }
+.informe-header h1     { font-size: 1.9rem; font-weight: 800; color: #0a2e1f; margin: 0 0 8px; letter-spacing: -0.02em; }
+.informe-header p      { color: #6b7280; font-size: 0.92rem; }
 
-.aviso {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #fef3c7;
-  border: 1px solid #fcd34d;
-  border-radius: 10px;
-  padding: 16px 20px;
-  color: #92400e;
-}
-.aviso a { color: #2e8b57; font-weight: 600; }
+/* ── AVISO ── */
+.aviso { display: flex; gap: 14px; align-items: flex-start; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 14px; padding: 20px 22px; color: #92400e; }
+.aviso-icon   { font-size: 1.6rem; flex-shrink: 0; }
+.aviso strong { display: block; font-size: 0.95rem; font-weight: 800; margin-bottom: 4px; }
+.aviso p      { font-size: 0.85rem; margin: 0 0 8px; }
+.aviso-link   { color: #2e8b57; font-weight: 700; font-size: 0.88rem; text-decoration: none; }
+.aviso-link:hover { text-decoration: underline; }
 
-.preview-acciones {
-  text-align: right;
-  margin-bottom: 20px;
-}
+/* ── ACCIONES ── */
+.preview-acciones { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+.preview-info span  { display: block; font-weight: 700; color: #0a2e1f; font-size: 0.92rem; }
+.preview-info small { color: #9ca3af; font-size: 0.78rem; }
 
 .btn-generar {
-  background: #2e8b57;
-  color: white;
-  border: none;
-  padding: 12px 28px;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-family: 'DM Sans', sans-serif;
+  background: #0a2e1f; color: white; border: none;
+  padding: 12px 24px; border-radius: 10px;
+  font-size: 0.92rem; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: 0.2s; white-space: nowrap;
 }
-.btn-generar:hover { background: #256e45; }
+.btn-generar:hover { background: #1a5c37; transform: translateY(-1px); }
 
-/* CONTENIDO PDF */
+/* ── CONTENIDO PDF ── */
 .pdf-contenido {
   background: white;
   border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  padding: 40px;
+  border-radius: 16px;
+  padding: 44px 48px;
+  width: 860px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
+/* ── CABECERA ── */
 .pdf-cabecera {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #2e8b57;
-  margin-bottom: 32px;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 3px solid #0a2e1f;
+  margin-bottom: 28px;
 }
-.pdf-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.pdf-logo-circulo { font-size: 1.8rem; }
-.pdf-logo-texto { font-size: 1.3rem; font-weight: 700; color: #2e8b57; }
-.pdf-fecha {
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  font-size: 0.85rem;
-  color: #666;
-  gap: 2px;
-}
+.pdf-logo          { display: flex; align-items: center; gap: 8px; }
+.pdf-logo-circulo  { font-size: 1.8rem; }
+.pdf-logo-texto    { font-size: 1.1rem; font-weight: 800; color: #0a2e1f; letter-spacing: -0.02em; }
+.pdf-titulo-col    { display: flex; flex-direction: column; gap: 2px; }
+.pdf-titulo-principal { font-size: 1rem; font-weight: 800; color: #0a2e1f; }
+.pdf-subtitulo     { font-size: 0.78rem; color: #9ca3af; }
+.pdf-fecha         { display: flex; flex-direction: column; text-align: right; gap: 2px; }
+.pdf-fecha-label   { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; }
+.pdf-fecha-valor   { font-size: 0.85rem; font-weight: 700; color: #374151; }
 
-.pdf-seccion { margin-bottom: 36px; }
+/* ── FRANJA EMPRESA ── */
+.pdf-empresa-franja {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  background: #f8fafc;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 36px;
+  border: 1px solid #e5e7eb;
+}
+.pdf-empresa-item {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 18px 20px;
+  border-right: 1px solid #e5e7eb;
+}
+.pdf-empresa-item:last-child { border-right: none; }
+.pdf-empresa-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9ca3af; font-weight: 700; }
+.pdf-empresa-valor { font-size: 1rem; font-weight: 800; color: #0a2e1f; }
+
+/* ── SECCIONES ── */
+.pdf-seccion { margin-bottom: 40px; }
 .pdf-seccion-titulo {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #2e8b57;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #e5e7eb;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.95rem; font-weight: 800; color: #0a2e1f;
+  margin-bottom: 18px; padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.pdf-seccion-num {
+  background: #0a2e1f; color: white;
+  font-size: 0.7rem; font-weight: 800;
+  padding: 3px 8px; border-radius: 6px; letter-spacing: 0.04em;
 }
 
-.pdf-empresa-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-.pdf-dato {
-  background: #f9fafb;
-  border-radius: 8px;
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.pdf-dato-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
-.pdf-dato-valor { font-size: 1rem; font-weight: 700; color: #1a1a2e; }
-
-.texto-verde    { color: #065f46 !important; }
-.texto-amarillo { color: #92400e !important; }
-.texto-rojo     { color: #991b1b !important; }
-
-.pdf-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-.pdf-kpi {
-  background: #f9fafb;
-  border-radius: 10px;
-  padding: 16px 12px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-.pdf-kpi-icono { font-size: 1.5rem; }
-.pdf-kpi-valor { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; }
-.pdf-kpi-label { font-size: 0.75rem; color: #888; }
-.pdf-badge {
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 20px;
-  margin-top: 6px;
-}
+/* ── KPIs ── */
+.pdf-kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.pdf-kpi { border-radius: 12px; padding: 18px 16px; display: flex; flex-direction: column; gap: 6px; border: 1px solid; }
+.energia-kpi  { background: #fff7ed; border-color: #fed7aa; }
+.agua-kpi     { background: #eff6ff; border-color: #bfdbfe; }
+.co2-kpi      { background: #f8fafc; border-color: #e2e8f0; }
+.residuos-kpi { background: #f0fdf4; border-color: #bbf7d0; }
+.pdf-kpi-icono  { font-size: 1.5rem; }
+.pdf-kpi-datos  { display: flex; flex-direction: column; gap: 1px; }
+.pdf-kpi-valor  { font-size: 1.3rem; font-weight: 800; color: #0a2e1f; line-height: 1; }
+.pdf-kpi-unidad { font-size: 0.72rem; font-weight: 600; color: #6b7280; }
+.pdf-kpi-label  { font-size: 0.72rem; color: #9ca3af; margin-top: 2px; }
+.pdf-badge { display: inline-flex; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px; width: fit-content; }
 .badge-verde    { background: #d1fae5; color: #065f46; }
 .badge-amarillo { background: #fef3c7; color: #92400e; }
 .badge-rojo     { background: #fee2e2; color: #991b1b; }
 
-.pdf-tabla {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
+/* ── ESTADÍSTICAS ── */
+.pdf-stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.pdf-stat {
+  background: #f9fafb; border-radius: 12px; padding: 18px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+  border: 1px solid #f0f0f0;
 }
-.pdf-tabla thead tr { background: #2e8b57; color: white; }
-.pdf-tabla th { padding: 10px 14px; text-align: left; font-weight: 600; }
-.pdf-tabla td { padding: 10px 14px; border-bottom: 1px solid #f3f4f6; color: #333; }
-.pdf-tabla tbody tr:nth-child(even) { background: #f9fafb; }
+.pdf-stat-val  { font-size: 1.5rem; font-weight: 800; color: #0a2e1f; }
+.pdf-stat-lbl  { font-size: 0.75rem; color: #6b7280; font-weight: 600; line-height: 1.3; }
+.pdf-stat-unit { font-size: 0.7rem; color: #9ca3af; }
 
-.pdf-conclusion {
-  border-radius: 10px;
-  padding: 20px 24px;
-  border: 1.5px solid;
-  line-height: 1.6;
-  font-size: 0.95rem;
+/* ── GRÁFICO ── */
+.pdf-grafico-wrap { background: #f9fafb; border-radius: 12px; padding: 16px; border: 1px solid #f0f0f0; }
+
+/* ── TABLA HISTORIAL ESTILO DASHBOARD ── */
+.pdf-tabla-wrap { overflow-x: auto; }
+
+.pdf-tabla-pro {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  font-size: 0.82rem;
 }
+
+.pdf-tabla-pro thead th {
+  text-align: left;
+  padding: 0 14px 8px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.pdf-tabla-pro tbody tr {
+  background: #f8fafc;
+}
+.pdf-tabla-pro tbody tr.fila-par {
+  background: white;
+}
+.pdf-tabla-pro tbody td {
+  padding: 12px 14px;
+  vertical-align: middle;
+}
+.pdf-tabla-pro tbody td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.pdf-tabla-pro tbody td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.pdf-row-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.72rem; color: #475569;
+}
+
+.pdf-fecha-cell { display: flex; flex-direction: column; line-height: 1.2; }
+.pdf-fecha-dia  { font-weight: 800; font-size: 0.92rem; color: #111827; }
+.pdf-fecha-mes  { color: #64748b; font-size: 0.68rem; }
+
+.pdf-pill {
+  display: inline-flex; align-items: center;
+  padding: 5px 10px; border-radius: 999px;
+  font-size: 0.76rem; font-weight: 700; white-space: nowrap;
+}
+.energia-pill  { background: #fff7ed; color: #c2410c; }
+.agua-pill     { background: #eff6ff; color: #1d4ed8; }
+.co2-pill      { background: #f3f4f6; color: #374151; }
+.residuos-pill { background: #ecfdf5; color: #047857; }
+
+.pdf-estado { display: inline-flex; font-size: 0.72rem; font-weight: 700; padding: 4px 8px; border-radius: 8px; white-space: nowrap; }
+.estado-verde    { background: #d1fae5; color: #065f46; }
+.estado-amarillo { background: #fef3c7; color: #92400e; }
+.estado-rojo     { background: #fee2e2; color: #991b1b; }
+
+.pdf-tabla-pro tfoot .fila-total td {
+  padding: 14px;
+  border-top: 2px solid #e2e8f0;
+  font-weight: 800;
+  color: #0a2e1f;
+  background: #f0faf5;
+}
+.pdf-tabla-pro tfoot .fila-total td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.pdf-tabla-pro tfoot .fila-total td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* ── ÍNDICE ── */
+.pdf-indice-row {
+  display: flex; align-items: center; gap: 20px;
+  margin-bottom: 20px;
+}
+.pdf-indice-num { font-size: 2.8rem; font-weight: 800; line-height: 1; flex-shrink: 0; }
+.pdf-indice-barra-wrap { flex: 1; }
+.pdf-indice-barra { background: #f3f4f6; border-radius: 20px; height: 14px; overflow: hidden; margin-bottom: 6px; }
+.pdf-indice-fill { height: 100%; border-radius: 20px; transition: width 0.8s ease; }
+.fill-verde    { background: linear-gradient(90deg, #10b981, #2e8b57); }
+.fill-amarillo { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.fill-rojo     { background: linear-gradient(90deg, #ef4444, #dc2626); }
+.pdf-indice-etiquetas { display: flex; justify-content: space-between; font-size: 0.7rem; color: #9ca3af; }
+
+.pdf-mini-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.pdf-mini-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 14px 12px; border-radius: 12px; text-align: center;
+  border: 1px solid transparent;
+}
+.pdf-mini-item.badge-verde    { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.pdf-mini-item.badge-amarillo { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.pdf-mini-item.badge-rojo     { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+.pmi-icon  { font-size: 1.2rem; }
+.pmi-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7; }
+.pmi-val   { font-size: 0.78rem; font-weight: 700; }
+
+/* ── CONCLUSIÓN ── */
+.pdf-conclusion { border-radius: 12px; padding: 24px 26px; border: 2px solid; }
 .conclusion-verde    { background: #f0fdf4; border-color: #86efac; color: #166534; }
 .conclusion-amarillo { background: #fefce8; border-color: #fde047; color: #854d0e; }
 .conclusion-rojo     { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
-.conclusion-verde p, .conclusion-amarillo p, .conclusion-rojo p { margin: 0 0 6px; }
 
-.pdf-pie {
-  margin-top: 40px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
-  text-align: center;
-  font-size: 0.78rem;
-  color: #aaa;
+.pdf-conclusion-header { margin-bottom: 12px; }
+.pdf-conclusion-badge {
+  display: inline-flex; font-size: 0.78rem; font-weight: 800;
+  padding: 4px 14px; border-radius: 20px;
+  background: rgba(0,0,0,0.08);
+}
+.pdf-conclusion-titulo { margin: 0 0 8px; font-size: 1rem; font-weight: 800; }
+.pdf-conclusion-desc   { margin: 0 0 18px; font-size: 0.88rem; line-height: 1.65; }
+
+.pdf-recomendaciones { border-top: 1px solid rgba(0,0,0,0.08); padding-top: 14px; }
+.pdf-reco-titulo { font-size: 0.82rem; font-weight: 700; margin: 0 0 10px; }
+.pdf-reco-lista  { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.pdf-reco-lista li { font-size: 0.84rem; line-height: 1.5; }
+
+/* ── COLORES ÍNDICE ── */
+.texto-verde    { color: #059669 !important; }
+.texto-amarillo { color: #d97706 !important; }
+.texto-rojo     { color: #dc2626 !important; }
+
+/* ── PIE ── */
+.pdf-pie { margin-top: 44px; }
+.pdf-pie-linea { height: 2px; background: linear-gradient(to right, #0a2e1f, transparent); margin-bottom: 14px; border-radius: 2px; }
+.pdf-pie-contenido { display: flex; justify-content: space-between; font-size: 0.75rem; color: #9ca3af; }
+
+/* ── BOTONES INFERIORES ── */
+.preview-bottom { display: flex; justify-content: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+
+.btn-volver {
+  padding: 12px 22px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+  background: white; color: #374151; font-weight: 700; font-family: inherit; font-size: 0.88rem; cursor: pointer; transition: 0.2s;
+}
+.btn-volver:hover { border-color: #0a2e1f; color: #0a2e1f; }
+
+.btn-generar-bottom {
+  padding: 12px 22px; background: #0a2e1f; border: none; border-radius: 10px;
+  color: white; font-weight: 700; font-family: inherit; font-size: 0.88rem; cursor: pointer; transition: 0.2s;
+}
+.btn-generar-bottom:hover { background: #1a5c37; transform: translateY(-1px); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  .pdf-contenido      { width: 100%; padding: 28px 24px; }
+  .pdf-cabecera       { grid-template-columns: auto 1fr; }
+  .pdf-fecha          { display: none; }
+  .pdf-kpi-grid       { grid-template-columns: repeat(2,1fr); }
+  .pdf-stats-grid     { grid-template-columns: repeat(2,1fr); }
+  .pdf-empresa-franja { grid-template-columns: repeat(2,1fr); }
+  .pdf-empresa-item:nth-child(2) { border-right: none; }
+  .pdf-mini-grid      { grid-template-columns: repeat(2,1fr); }
 }
 
+@media (max-width: 520px) {
+  .informe-header h1  { font-size: 1.4rem; }
+  .pdf-contenido      { padding: 20px 16px; }
+  .pdf-kpi-grid       { grid-template-columns: 1fr; }
+  .pdf-stats-grid     { grid-template-columns: 1fr; }
+}

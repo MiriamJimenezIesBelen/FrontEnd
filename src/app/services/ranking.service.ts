@@ -30,4 +30,13 @@ export class RankingService {
       headers: { Authorization: `Bearer ${token}` }
     });
   }
+
+
+
+  guardarPuntuacionBackend(nombre: string, puntos: number) {
+    const token = localStorage.getItem('token');
+    return this.http.post(this.url, { nombre, puntos }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  }
 }

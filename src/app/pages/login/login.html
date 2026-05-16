@@ -1,37 +1,55 @@
 <div class="auth-page">
+  <div class="auth-split">
 
-  <div class="auth-card">
-
-    <div class="auth-header">
-      <h2>Acceso a tu panel</h2>
-      <p>Gestiona el impacto ambiental de tu empresa</p>
+    <!-- Panel izquierdo (branding) -->
+    <div class="auth-brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="48">
+          <circle cx="20" cy="20" r="18" fill="white" opacity="0.15"/>
+          <circle cx="20" cy="20" r="11" fill="white" opacity="0.25"/>
+          <path d="M20 8 C14 16, 14 26, 20 30 C26 26, 26 16, 20 8Z" fill="white"/>
+          <circle cx="20" cy="20" r="4" fill="white" opacity="0.9"/>
+        </svg>
+        <span>ImpactoVisible</span>
+      </div>
+      <h2>Gestiona el impacto<br>ambiental de tu empresa</h2>
+      <ul class="brand-features">
+        <li>✅ Panel ESG en tiempo real</li>
+        <li>✅ Informes profesionales en PDF</li>
+        <li>✅ Ranking sectorial</li>
+        <li>✅ Simulador de planes de acción</li>
+      </ul>
     </div>
 
-    <input
-      type="email"
-      [(ngModel)]="correo"
-      placeholder="Correo empresarial"
-      [disabled]="cargando">
+    <!-- Panel derecho (formulario) -->
+    <div class="auth-form-wrap">
+      <div class="auth-card">
+        <h2>Accede a tu panel</h2>
+        <p class="auth-sub">Introduce tus credenciales para continuar</p>
 
-    <input
-      type="password"
-      [(ngModel)]="password"
-      placeholder="Contraseña"
-      [disabled]="cargando">
+        <div class="field-group">
+          <label>Correo empresarial</label>
+          <input type="email" [(ngModel)]="correo" placeholder="empresa@ejemplo.com" [disabled]="cargando">
+        </div>
 
-    <button class="auth-btn" (click)="login()" [disabled]="cargando">
-      <span *ngIf="!cargando">Iniciar sesión</span>
-      <span *ngIf="cargando">⏳ Conectando...</span>
-    </button>
+        <div class="field-group">
+          <label>Contraseña</label>
+          <input type="password" [(ngModel)]="password" placeholder="••••••••" [disabled]="cargando">
+        </div>
 
+        <button class="auth-btn" (click)="login()" [disabled]="cargando">
+          <span *ngIf="!cargando">Iniciar sesión →</span>
+          <span *ngIf="cargando">⏳ Conectando...</span>
+        </button>
 
+        <p class="error" *ngIf="error">Credenciales incorrectas. Revisa tu correo y contraseña.</p>
 
-    <p class="error" *ngIf="error">Credenciales incorrectas</p>
-
-    <button class="auth-back" routerLink="/home" [disabled]="cargando">
-      ← Volver
-    </button>
+        <div class="auth-footer">
+          <button class="auth-back" routerLink="/home" [disabled]="cargando">← Volver al inicio</button>
+          <a routerLink="/registro-empresa" class="auth-register">¿No tienes cuenta? Regístrate</a>
+        </div>
+      </div>
+    </div>
 
   </div>
-
 </div>

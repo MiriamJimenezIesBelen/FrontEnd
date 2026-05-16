@@ -1,133 +1,295 @@
-
 <div class="informe-page">
 
   <div class="informe-header">
-    <h1>Generador de Informe PDF</h1>
-    <p>Genera un informe completo con tus datos de sostenibilidad</p>
+    <div class="informe-header-icon">📊</div>
+    <h1>Informe de Sostenibilidad ESG</h1>
+    <p>Genera y descarga un informe profesional con todos tus datos ambientales</p>
   </div>
 
-  <!-- Sin datos -->
   <div class="aviso" *ngIf="sinDatos">
-    <span>⚠️</span>
-    <p>No tienes datos registrados. <a routerLink="/registro-impacto">Registra tus consumos primero.</a></p>
+    <span class="aviso-icon">⚠️</span>
+    <div>
+      <strong>Sin datos registrados</strong>
+      <p>Necesitas registrar consumos antes de generar el informe.</p>
+      <a routerLink="/registro-impacto" class="aviso-link">Registrar consumos →</a>
+    </div>
   </div>
 
-  <!-- Vista previa del informe -->
   <div class="preview-wrap" *ngIf="!sinDatos">
 
     <div class="preview-acciones">
-      <button class="btn-generar" (click)="generarPDF()">
-        📄 Descargar PDF
-      </button>
+      <div class="preview-info">
+        <span>📋 Vista previa del informe</span>
+        <small>El PDF incluirá todos los datos mostrados a continuación</small>
+      </div>
+      <button class="btn-generar" (click)="generarPDF()">⬇️ Descargar PDF</button>
     </div>
 
-    <!-- ESTO ES LO QUE SE CONVIERTE EN PDF -->
     <div id="contenido-pdf" class="pdf-contenido">
 
-      <!-- Cabecera del informe -->
+      <!-- CABECERA -->
       <div class="pdf-cabecera">
         <div class="pdf-logo">
           <span class="pdf-logo-circulo">🌿</span>
           <span class="pdf-logo-texto">ImpactoVisible</span>
         </div>
+        <div class="pdf-titulo-col">
+          <span class="pdf-titulo-principal">Informe de Sostenibilidad ESG</span>
+          <span class="pdf-subtitulo">Período analizado · {{ impactos.length }} registro{{ impactos.length !== 1 ? 's' : '' }}</span>
+        </div>
         <div class="pdf-fecha">
-          <span>Informe de Sostenibilidad</span>
-          <span>{{ fechaHoy }}</span>
+          <span class="pdf-fecha-label">Generado el</span>
+          <span class="pdf-fecha-valor">{{ fechaHoy }}</span>
         </div>
       </div>
 
-      <!-- Datos empresa -->
-      <div class="pdf-seccion">
-        <h2 class="pdf-seccion-titulo">Datos de la empresa</h2>
-        <div class="pdf-empresa-grid">
-          <div class="pdf-dato"><span class="pdf-dato-label">Empresa</span><span class="pdf-dato-valor">{{ nombreEmpresa }}</span></div>
-          <div class="pdf-dato"><span class="pdf-dato-label">Sector</span><span class="pdf-dato-valor">{{ sectorEmpresa }}</span></div>
-          <div class="pdf-dato"><span class="pdf-dato-label">Registros analizados</span><span class="pdf-dato-valor">{{ impactos.length }}</span></div>
-          <div class="pdf-dato"><span class="pdf-dato-label">Índice sostenibilidad</span><span class="pdf-dato-valor" [ngClass]="'texto-' + nivelGeneral">{{ indicePorcentaje }}%</span></div>
+      <!-- FRANJA EMPRESA -->
+      <div class="pdf-empresa-franja">
+        <div class="pdf-empresa-item">
+          <span class="pdf-empresa-label">EMPRESA</span>
+          <span class="pdf-empresa-valor">{{ nombreEmpresa }}</span>
+        </div>
+        <div class="pdf-empresa-item">
+          <span class="pdf-empresa-label">SECTOR</span>
+          <span class="pdf-empresa-valor">{{ sectorEmpresa || 'No especificado' }}</span>
+        </div>
+        <div class="pdf-empresa-item">
+          <span class="pdf-empresa-label">REGISTROS</span>
+          <span class="pdf-empresa-valor">{{ impactos.length }}</span>
+        </div>
+        <div class="pdf-empresa-item">
+          <span class="pdf-empresa-label">ÍNDICE ESG</span>
+          <span class="pdf-empresa-valor" [ngClass]="'texto-' + nivelGeneral">{{ indicePorcentaje }}%</span>
         </div>
       </div>
 
-      <!-- KPIs -->
+      <!-- 01 KPIs -->
       <div class="pdf-seccion">
-        <h2 class="pdf-seccion-titulo">Resumen de consumos</h2>
+        <h2 class="pdf-seccion-titulo">
+          <span class="pdf-seccion-num">01</span>
+          Resumen de consumos totales
+        </h2>
         <div class="pdf-kpi-grid">
-          <div class="pdf-kpi">
+          <div class="pdf-kpi energia-kpi">
             <span class="pdf-kpi-icono">⚡</span>
-            <span class="pdf-kpi-valor">{{ totalEnergia }} kWh</span>
-            <span class="pdf-kpi-label">Energía total</span>
+            <div class="pdf-kpi-datos">
+              <span class="pdf-kpi-valor">{{ totalEnergia | number:'1.0-0' }}</span>
+              <span class="pdf-kpi-unidad">kWh</span>
+              <span class="pdf-kpi-label">Energía total consumida</span>
+            </div>
             <span class="pdf-badge" [ngClass]="badgeEnergia">{{ textoEnergia }}</span>
           </div>
-          <div class="pdf-kpi">
+          <div class="pdf-kpi agua-kpi">
             <span class="pdf-kpi-icono">💧</span>
-            <span class="pdf-kpi-valor">{{ totalAgua }} L</span>
-            <span class="pdf-kpi-label">Agua total</span>
+            <div class="pdf-kpi-datos">
+              <span class="pdf-kpi-valor">{{ totalAgua | number:'1.0-0' }}</span>
+              <span class="pdf-kpi-unidad">L</span>
+              <span class="pdf-kpi-label">Agua total utilizada</span>
+            </div>
             <span class="pdf-badge" [ngClass]="badgeAgua">{{ textoAgua }}</span>
           </div>
-          <div class="pdf-kpi">
+          <div class="pdf-kpi co2-kpi">
             <span class="pdf-kpi-icono">🌫️</span>
-            <span class="pdf-kpi-valor">{{ totalCo2 }} kg</span>
-            <span class="pdf-kpi-label">CO₂ emitido</span>
+            <div class="pdf-kpi-datos">
+              <span class="pdf-kpi-valor">{{ totalCo2 | number:'1.0-0' }}</span>
+              <span class="pdf-kpi-unidad">kg</span>
+              <span class="pdf-kpi-label">CO₂ emitido</span>
+            </div>
             <span class="pdf-badge" [ngClass]="badgeCo2">{{ textoCo2 }}</span>
           </div>
-          <div class="pdf-kpi">
+          <div class="pdf-kpi residuos-kpi">
             <span class="pdf-kpi-icono">🗑️</span>
-            <span class="pdf-kpi-valor">{{ totalResiduos }} kg</span>
-            <span class="pdf-kpi-label">Residuos</span>
+            <div class="pdf-kpi-datos">
+              <span class="pdf-kpi-valor">{{ totalResiduos | number:'1.0-0' }}</span>
+              <span class="pdf-kpi-unidad">kg</span>
+              <span class="pdf-kpi-label">Residuos generados</span>
+            </div>
             <span class="pdf-badge" [ngClass]="badgeResiduos">{{ textoResiduos }}</span>
           </div>
         </div>
       </div>
 
-      <!-- Gráfico -->
+      <!-- 02 ESTADÍSTICAS -->
       <div class="pdf-seccion">
-        <h2 class="pdf-seccion-titulo">Evolución de consumos</h2>
-        <canvas id="graficoInforme"></canvas>
-      </div>
-
-      <!-- Historial -->
-      <div class="pdf-seccion">
-        <h2 class="pdf-seccion-titulo">Historial de registros</h2>
-        <table class="pdf-tabla">
-          <thead>
-          <tr>
-            <th>#</th>
-            <th>Energía (kWh)</th>
-            <th>Agua (L)</th>
-            <th>CO₂ (kg)</th>
-            <th>Residuos (kg)</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let imp of impactos; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ imp.energia }}</td>
-            <td>{{ imp.agua }}</td>
-            <td>{{ imp.co2 }}</td>
-            <td>{{ imp.residuos }}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Conclusión -->
-      <div class="pdf-seccion">
-        <h2 class="pdf-seccion-titulo">Conclusión</h2>
-        <div class="pdf-conclusion" [ngClass]="'conclusion-' + nivelGeneral">
-          <p><strong>{{ mensajeGeneral }}</strong></p>
-          <p>{{ descripcionGeneral }}</p>
+        <h2 class="pdf-seccion-titulo">
+          <span class="pdf-seccion-num">02</span>
+          Estadísticas y promedios
+        </h2>
+        <div class="pdf-stats-grid">
+          <div class="pdf-stat">
+            <span class="pdf-stat-val">{{ (totalEnergia / impactos.length) | number:'1.0-0' }}</span>
+            <span class="pdf-stat-lbl">Energía media / registro</span>
+            <span class="pdf-stat-unit">kWh</span>
+          </div>
+          <div class="pdf-stat">
+            <span class="pdf-stat-val">{{ (totalAgua / impactos.length) | number:'1.0-0' }}</span>
+            <span class="pdf-stat-lbl">Agua media / registro</span>
+            <span class="pdf-stat-unit">L</span>
+          </div>
+          <div class="pdf-stat">
+            <span class="pdf-stat-val">{{ (totalCo2 / impactos.length) | number:'1.0-0' }}</span>
+            <span class="pdf-stat-lbl">CO₂ medio / registro</span>
+            <span class="pdf-stat-unit">kg</span>
+          </div>
+          <div class="pdf-stat">
+            <span class="pdf-stat-val">{{ (totalResiduos / impactos.length) | number:'1.0-0' }}</span>
+            <span class="pdf-stat-lbl">Residuos medios / registro</span>
+            <span class="pdf-stat-unit">kg</span>
+          </div>
         </div>
       </div>
 
-      <!-- Pie -->
+      <!-- 03 GRÁFICO -->
+      <div class="pdf-seccion">
+        <h2 class="pdf-seccion-titulo">
+          <span class="pdf-seccion-num">03</span>
+          Evolución de consumos por registro
+        </h2>
+        <div class="pdf-grafico-wrap">
+          <canvas id="graficoInforme"></canvas>
+        </div>
+      </div>
+
+      <!-- 04 HISTORIAL CON ESTILO DASHBOARD -->
+      <div class="pdf-seccion">
+        <h2 class="pdf-seccion-titulo">
+          <span class="pdf-seccion-num">04</span>
+          Historial detallado de registros
+        </h2>
+        <div class="pdf-tabla-wrap">
+          <table class="pdf-tabla-pro">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>⚡ Energía</th>
+              <th>💧 Agua</th>
+              <th>🌫️ CO₂</th>
+              <th>♻️ Residuos</th>
+              <th>Estado</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let imp of impactos; let i = index" [class.fila-par]="i % 2 === 1">
+              <td><span class="pdf-row-num">{{ i + 1 }}</span></td>
+              <td>
+                <div class="pdf-fecha-cell">
+                  <span class="pdf-fecha-dia">{{ imp.fecha ? (imp.fecha | date:'dd') : '--' }}</span>
+                  <span class="pdf-fecha-mes">{{ imp.fecha ? (imp.fecha | date:'MMM yyyy') : '--' }}</span>
+                </div>
+              </td>
+              <td><span class="pdf-pill energia-pill">{{ imp.energia | number:'1.0-0' }} kWh</span></td>
+              <td><span class="pdf-pill agua-pill">{{ imp.agua | number:'1.0-0' }} L</span></td>
+              <td><span class="pdf-pill co2-pill">{{ imp.co2 | number:'1.0-0' }} kg</span></td>
+              <td><span class="pdf-pill residuos-pill">{{ imp.residuos | number:'1.0-0' }} kg</span></td>
+              <td>
+                  <span class="pdf-estado"
+                        [ngClass]="(imp.energia < 1200 && imp.agua < 5000 && imp.co2 < 500) ? 'estado-verde' : (imp.energia < 1500 || imp.co2 < 700) ? 'estado-amarillo' : 'estado-rojo'">
+                    {{ (imp.energia < 1200 && imp.agua < 5000 && imp.co2 < 500) ? '✅ Eficiente' : (imp.energia < 1500 || imp.co2 < 700) ? '⚠️ Mejorable' : '🔴 Alto' }}
+                  </span>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr class="fila-total">
+              <td colspan="2"><strong>TOTAL ACUMULADO</strong></td>
+              <td><span class="pdf-pill energia-pill"><strong>{{ totalEnergia | number:'1.0-0' }} kWh</strong></span></td>
+              <td><span class="pdf-pill agua-pill"><strong>{{ totalAgua | number:'1.0-0' }} L</strong></span></td>
+              <td><span class="pdf-pill co2-pill"><strong>{{ totalCo2 | number:'1.0-0' }} kg</strong></span></td>
+              <td><span class="pdf-pill residuos-pill"><strong>{{ totalResiduos | number:'1.0-0' }} kg</strong></span></td>
+              <td></td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- 05 ÍNDICE -->
+      <div class="pdf-seccion">
+        <h2 class="pdf-seccion-titulo">
+          <span class="pdf-seccion-num">05</span>
+          Índice de sostenibilidad
+        </h2>
+        <div class="pdf-indice-row">
+          <div class="pdf-indice-num" [ngClass]="'texto-' + nivelGeneral">{{ indicePorcentaje }}%</div>
+          <div class="pdf-indice-barra-wrap">
+            <div class="pdf-indice-barra">
+              <div class="pdf-indice-fill" [style.width]="indicePorcentaje + '%'" [ngClass]="'fill-' + nivelGeneral"></div>
+            </div>
+            <div class="pdf-indice-etiquetas">
+              <span>0%</span><span>50%</span><span>100%</span>
+            </div>
+          </div>
+        </div>
+        <div class="pdf-mini-grid">
+          <div class="pdf-mini-item" [ngClass]="badgeEnergia">
+            <span class="pmi-icon">⚡</span>
+            <span class="pmi-label">Energía</span>
+            <span class="pmi-val">{{ textoEnergia }}</span>
+          </div>
+          <div class="pdf-mini-item" [ngClass]="badgeAgua">
+            <span class="pmi-icon">💧</span>
+            <span class="pmi-label">Agua</span>
+            <span class="pmi-val">{{ textoAgua }}</span>
+          </div>
+          <div class="pdf-mini-item" [ngClass]="badgeCo2">
+            <span class="pmi-icon">🌫️</span>
+            <span class="pmi-label">CO₂</span>
+            <span class="pmi-val">{{ textoCo2 }}</span>
+          </div>
+          <div class="pdf-mini-item" [ngClass]="badgeResiduos">
+            <span class="pmi-icon">♻️</span>
+            <span class="pmi-label">Residuos</span>
+            <span class="pmi-val">{{ textoResiduos }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 CONCLUSIÓN + RECOMENDACIONES -->
+      <div class="pdf-seccion">
+        <h2 class="pdf-seccion-titulo">
+          <span class="pdf-seccion-num">06</span>
+          Conclusión y recomendaciones
+        </h2>
+        <div class="pdf-conclusion" [ngClass]="'conclusion-' + nivelGeneral">
+          <div class="pdf-conclusion-header">
+            <span class="pdf-conclusion-badge">Índice ESG: {{ indicePorcentaje }}%</span>
+          </div>
+          <p class="pdf-conclusion-titulo"><strong>{{ mensajeGeneral }}</strong></p>
+          <p class="pdf-conclusion-desc">{{ descripcionGeneral }}</p>
+          <div class="pdf-recomendaciones">
+            <p class="pdf-reco-titulo">📌 Próximos pasos recomendados:</p>
+            <ul class="pdf-reco-lista">
+              <ng-container *ngIf="nivelGeneral === 'verde'">
+                <li>Mantén tus prácticas actuales y documenta los procesos que han llevado a estos resultados.</li>
+                <li>Comparte buenas prácticas con otras empresas del sector en la comunidad ImpactoVisible.</li>
+                <li>Establece nuevos objetivos más ambiciosos para continuar mejorando tu rendimiento ESG.</li>
+              </ng-container>
+              <ng-container *ngIf="nivelGeneral !== 'verde'">
+                <li>Revisa los indicadores marcados como "Alto" o "Mejorable" y elabora un plan de acción específico.</li>
+                <li>Usa el Simulador de Plan para estimar el impacto de posibles mejoras antes de implementarlas.</li>
+                <li>Registra datos con más frecuencia para detectar tendencias y actuar de forma preventiva.</li>
+              </ng-container>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIE -->
       <div class="pdf-pie">
-        <p>Informe generado automáticamente por ImpactoVisible.org · {{ fechaHoy }}</p>
+        <div class="pdf-pie-linea"></div>
+        <div class="pdf-pie-contenido">
+          <span>🌿 ImpactoVisible — Plataforma de sostenibilidad empresarial</span>
+          <span>Generado automáticamente el {{ fechaHoy }}</span>
+        </div>
       </div>
 
     </div>
 
-
-    <div style="text-align: center; margin-top: 30px;">
+    <div class="preview-bottom">
       <button class="btn-volver" routerLink="/dashboard">← Volver al dashboard</button>
+      <button class="btn-generar-bottom" (click)="generarPDF()">⬇️ Descargar PDF</button>
     </div>
+
   </div>
 </div>

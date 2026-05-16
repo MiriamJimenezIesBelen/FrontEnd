@@ -9,12 +9,18 @@ export class GamificacionService {
     let puntos = 0;
 
     impactos.forEach(i => {
-      if (i.energia < 1000) puntos += 50;
-      if (i.agua < 4000) puntos += 50;
-      if (i.residuos < 200) puntos += 50;
+
+      // energía
+      puntos += Math.max(0, 50 - (i.energia / 50));
+
+      // agua
+      puntos += Math.max(0, 50 - (i.agua / 200));
+
+      // residuos
+      puntos += Math.max(0, 50 - (i.residuos / 10));
     });
 
-    return puntos;
+    return Math.round(puntos);
   }
 
   obtenerMedallas(puntos: number, impactos: any[]): string[] {

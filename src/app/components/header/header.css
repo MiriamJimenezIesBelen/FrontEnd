@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+/* =========================
+   HEADER BASE
+========================= */
 .main-header {
   position: sticky;
   top: 0;
@@ -12,26 +15,36 @@
 }
 
 .header-inner {
-  width: 100%;
-  padding: 0 34px;
-  height: 72px;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 74px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 220px 1fr 220px;
   align-items: center;
-  gap: 20px;
-  box-sizing: border-box;
+  padding: 0 28px;
 }
 
-/* ── Logo ── */
+/* =========================
+   LOGO
+========================= */
 .logo-link {
   display: flex;
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  justify-self: start;
 }
-.logo-mark { display: flex; align-items: center; justify-content: center; }
-.logo-mark svg { width: 34px; height: 34px; }
+
+.logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-mark svg {
+  width: 34px;
+  height: 34px;
+}
+
 .logo-text {
   font-size: 1.1rem;
   font-weight: 800;
@@ -40,92 +53,17 @@
   white-space: nowrap;
 }
 
-/* ── Nav desktop: wrapper con flechas ── */
-.nav-desktop-wrap {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  min-width: 0;         /* permite que el flex-child se encoja */
-  overflow: hidden;     /* FIX: evita que los items desborden el grid */
-}
-
-/* ── Botones flecha ── */
-.scroll-btn {
-  background: rgba(10,46,31,0.08);
-  border: 1px solid rgba(10,46,31,0.15);
-  border-radius: 7px;
-  color: #0a2e1f;
-  width: 28px;
-  height: 28px;
+/* =========================
+   NAV DESKTOP
+========================= */
+.nav-desktop {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;       /* nunca se encoge */
-  transition: background 0.18s, opacity 0.18s, transform 0.18s;
-  font-size: 18px;
-  line-height: 1;
-  padding: 0;
-  user-select: none;
-}
-.scroll-btn:hover  { background: rgba(10,46,31,0.16); }
-.scroll-btn:active { transform: scale(0.92); }
-
-/* FIX principal: hidden oculta visualmente pero mantiene el espacio
-   con opacity + pointer-events, sin reflow que rompe el cálculo de scroll */
-.scroll-btn.hidden {
-  opacity: 0;
-  pointer-events: none;
-  /* NO usar display:none aquí — causaría un reflow que invalida scrollWidth */
+  gap: 4px;
 }
 
-/* ── Wrapper con fade en los bordes ── */
-.nav-scroll-wrap {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  min-width: 0;
-}
-
-/* Gradientes de fade izq/der */
-.nav-scroll-wrap::before,
-.nav-scroll-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 32px;
-  z-index: 2;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-.nav-scroll-wrap::before {
-  left: 0;
-  background: linear-gradient(to right, #dce8e0 40%, transparent);
-}
-.nav-scroll-wrap::after {
-  right: 0;
-  background: linear-gradient(to left, #dce8e0 40%, transparent);
-}
-/* Oculta el fade cuando ya no hay más contenido en esa dirección */
-.nav-scroll-wrap.at-start::before { opacity: 0; }
-.nav-scroll-wrap.at-end::after    { opacity: 0; }
-
-/* ── El nav scrollable real ── */
-.nav-scroll {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  overflow-x: auto;     /* scroll horizontal activo */
-  scrollbar-width: none;
-  padding: 0 6px;
-  scroll-behavior: smooth;
-  /* FIX: asegura que el scroll funcione dentro del contenedor */
-  width: 100%;
-  box-sizing: border-box;
-}
-.nav-scroll::-webkit-scrollbar { display: none; }
-
-/* ── Links de navegación ── */
+/* links */
 .nav-link {
   color: #2d5a41;
   text-decoration: none;
@@ -133,20 +71,130 @@
   font-weight: 600;
   padding: 7px 13px;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  transition: all 0.2s ease;
   white-space: nowrap;
-  transition: color 0.2s ease, background 0.2s ease;
-  flex-shrink: 0;       /* FIX: nunca se encoge para que haya scroll real */
 }
-.nav-link:hover  { color: #0a2e1f; background: rgba(10,46,31,0.10); }
-.nav-link.active { color: #0a2e1f; background: rgba(10,46,31,0.13); font-weight: 700; }
 
-/* ── Acciones derecha ── */
+.nav-link:hover {
+  color: #0a2e1f;
+  background: rgba(10,46,31,0.1);
+}
+
+.nav-link.active {
+  color: #0a2e1f;
+  background: rgba(10,46,31,0.13);
+  font-weight: 700;
+}
+
+/* =========================
+   DROPDOWN HERRAMIENTAS
+========================= */
+.nav-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-dropdown-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  color: #2d5a41;
+
+  padding: 7px 13px;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+
+  transition: all 0.2s ease;
+}
+
+.nav-dropdown-btn:hover {
+  background: rgba(10,46,31,0.06);
+}
+
+.nav-dropdown-btn.active {
+  background: rgba(10,46,31,0.12);
+}
+
+.nav-dropdown-btn .arrow {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* dropdown */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+
+  min-width: 240px;
+  padding: 8px;
+
+  background: #fff;
+  border: 1px solid #dbe7df;
+  border-radius: 14px;
+
+  box-shadow: 0 12px 30px rgba(10,46,31,0.12);
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.18s ease;
+  z-index: 999;
+}
+
+.dropdown-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.dropdown-item {
+  padding: 9px 14px;
+  border-radius: 8px;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  color: #2d5a41;
+  text-decoration: none;
+
+  display: flex;
+  align-items: center;
+
+  transition: background 0.15s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item.active {
+  background: rgba(10,46,31,0.08);
+  color: #0a2e1f;
+}
+
+/* =========================
+   NAV ACTIONS
+========================= */
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 10px;
   justify-self: end;
-  flex-shrink: 0;
 }
 
 .btn-outline {
@@ -157,11 +205,14 @@
   font-size: 0.84rem;
   font-weight: 600;
   text-decoration: none;
-  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
   background: transparent;
-  font-family: inherit;
 }
-.btn-outline:hover { border-color: #0a2e1f; color: #0a2e1f; background: rgba(10,46,31,0.07); }
+
+.btn-outline:hover {
+  border-color: #0a2e1f;
+  color: #0a2e1f;
+  background: rgba(10,46,31,0.07);
+}
 
 .btn-solid {
   padding: 8px 18px;
@@ -171,22 +222,33 @@
   font-size: 0.84rem;
   font-weight: 700;
   text-decoration: none;
-  transition: background 0.2s ease, transform 0.2s ease;
-  font-family: inherit;
 }
-.btn-solid:hover { background: #1c5b39; transform: translateY(-1px); }
 
-.user-block { display: flex; align-items: center; gap: 10px; }
+.btn-solid:hover {
+  background: #1c5b39;
+  transform: translateY(-1px);
+}
+
+/* user */
+.user-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .avatar {
-  width: 36px; height: 36px;
+  width: 36px;
+  height: 36px;
   background: #0a2e1f;
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #7dd9a3;
-  font-weight: 800; font-size: 0.88rem;
-  text-transform: uppercase;
-  flex-shrink: 0;
+  font-weight: 800;
+  font-size: 0.88rem;
 }
+
 .user-name {
   color: #0a2e1f;
   font-size: 0.88rem;
@@ -206,13 +268,11 @@
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  font-family: inherit;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
 }
-.btn-logout:hover { background: rgba(220,38,38,0.08); border-color: #dc2626; color: #dc2626; }
 
-/* ── Hamburguesa ── */
+/* =========================
+   HAMBURGER
+========================= */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -223,71 +283,89 @@
   padding: 6px;
   border-radius: 8px;
 }
+
 .hamburger span {
-  display: block;
-  width: 22px; height: 2px;
+  width: 22px;
+  height: 2px;
   background: #0a2e1f;
   border-radius: 2px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
 }
-.hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.active span:nth-child(2) { opacity: 0; }
-.hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ── Nav móvil (drawer) ── */
+/* =========================
+   MOBILE NAV (SIN CAMBIOS)
+========================= */
 .nav-mobile {
-  display: none;  /* se sobreescribe en el breakpoint */
+  display: none;
 }
-.mobile-overlay { display: none; }
 
-/* ══════════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════════ */
+.mobile-overlay {
+  display: none;
+}
+
+/* =========================
+   RESPONSIVE (RESTAURADO COMO LO TENÍAS)
+========================= */
 @media (max-width: 900px) {
   .header-inner {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 0 20px;
   }
 
-  /* Ocultar nav desktop en móvil */
-  .nav-desktop-wrap { display: none; }
+  .nav-desktop {
+    display: none;
+  }
 
-  /* Drawer lateral */
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .hamburger {
+    display: flex;
+    margin-left: 10px;
+  }
+
   .nav-mobile {
     position: fixed;
-    top: 0; left: 0;
-    width: 280px; height: 100%;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100%;
     background: #f2f7f4;
     border-right: 1px solid #c4d9cc;
+
     flex-direction: column;
     align-items: flex-start;
     padding: 20px 14px 28px;
     gap: 4px;
     overflow-y: auto;
+
     transform: translateX(-100%);
     transition: transform 0.28s ease;
+
     z-index: 1100;
     box-shadow: 8px 0 28px rgba(0,0,0,0.06);
-    display: flex;   /* drawer siempre en el DOM, se mueve con transform */
-  }
-  .nav-mobile.open { transform: translateX(0); }
-  .nav-mobile .nav-link { width: 100%; padding: 11px 14px; font-size: 0.93rem; box-sizing: border-box; }
 
-  .nav-close {
     display: flex;
-    align-self: flex-end;
-    background: none;
-    border: none;
-    font-size: 1rem;
-    color: #6b7280;
-    cursor: pointer;
-    padding: 4px 8px;
-    margin-bottom: 12px;
   }
 
-  .nav-actions { margin-left: auto; }
-  .hamburger   { display: flex; }
-  .user-name   { display: none; }
+  .nav-mobile.open {
+    transform: translateX(0);
+  }
+
+  .nav-mobile .nav-link {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 0.93rem;
+  }
+
+  .user-name {
+    display: none;
+  }
 
   .mobile-overlay {
     display: block;
@@ -295,12 +373,5 @@
     inset: 0;
     background: rgba(0,0,0,0.3);
     z-index: 1099;
-    backdrop-filter: blur(2px);
   }
-}
-
-@media (max-width: 480px) {
-  .logo-text { font-size: 1rem; }
-  .btn-solid, .btn-outline, .btn-logout { display: none; }
-  .header-inner { padding: 0 16px; }
 }

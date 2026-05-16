@@ -1,7 +1,6 @@
 <header class="main-header">
   <div class="header-inner">
 
-    <!-- Logo -->
     <a class="logo-link" routerLink="/home">
       <div class="logo-mark">
         <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -14,39 +13,29 @@
       <span class="logo-text">ImpactoVisible</span>
     </a>
 
-    <!-- Nav DESKTOP con scroll + flechas -->
-    <div class="nav-desktop-wrap" *ngIf="isLoggedIn">
-      <button
-        class="scroll-btn"
-        [class.hidden]="atStart"
-        (click)="scrollNav(-160)"
-        aria-label="Anterior">&#8249;</button>
+    <nav class="nav-desktop" *ngIf="isLoggedIn">
+      <a routerLink="/dashboard"        class="nav-link" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/registro-impacto" class="nav-link" routerLinkActive="active">Registrar</a>
+      <a routerLink="/objetivos"        class="nav-link" routerLinkActive="active">Objetivos</a>
 
-      <div class="nav-scroll-wrap"
-           [class.at-start]="atStart"
-           [class.at-end]="atEnd">
-        <nav class="nav-scroll" #navScroll (scroll)="onNavScroll($event)">
-          <a routerLink="/dashboard"            class="nav-link" routerLinkActive="active">Dashboard</a>
-          <a routerLink="/registro-impacto"     class="nav-link" routerLinkActive="active">Registrar</a>
-          <a routerLink="/objetivos"            class="nav-link" routerLinkActive="active">Objetivos</a>
-          <a routerLink="/simulador-plan"       class="nav-link" routerLinkActive="active">Plan</a>
-          <a routerLink="/calculadora"          class="nav-link" routerLinkActive="active">Calculadora</a>
-          <a routerLink="/buscador-proveedores" class="nav-link" routerLinkActive="active">Proveedores</a>
-          <a routerLink="/simulador-esg"        class="nav-link" routerLinkActive="active">🧪 Simulador</a>
-          <a routerLink="/informe-pdf"          class="nav-link" routerLinkActive="active">Informe</a>
-          <a routerLink="/comunidad"            class="nav-link" routerLinkActive="active">Comunidad</a>
-          <a routerLink="/ranking"              class="nav-link" routerLinkActive="active">🏆 Ranking</a>
-        </nav>
+      <!-- Dropdown Herramientas -->
+      <div class="nav-dropdown" (mouseenter)="dropdownAbierto=true" (mouseleave)="dropdownAbierto=false">
+        <button type="button" class="nav-link nav-dropdown-btn" [class.active]="dropdownActivo">
+          Herramientas <span class="arrow">▾</span>
+        </button>
+        <div class="dropdown-menu" [class.open]="dropdownAbierto">
+          <a routerLink="/simulador-plan"       class="dropdown-item" routerLinkActive="active" (click)="dropdownAbierto=false">🗺️ Plan de acción</a>
+          <a routerLink="/calculadora"          class="dropdown-item" routerLinkActive="active" (click)="dropdownAbierto=false">📊 Calculadora</a>
+          <a routerLink="/buscador-proveedores" class="dropdown-item" routerLinkActive="active" (click)="dropdownAbierto=false">🏭 Proveedores</a>
+          <a routerLink="/simulador-esg"        class="dropdown-item" routerLinkActive="active" (click)="dropdownAbierto=false">🧪 Simulador ESG</a>
+          <a routerLink="/comunidad"            class="dropdown-item" routerLinkActive="active" (click)="dropdownAbierto=false">🌍 Comunidad</a>
+          <a routerLink="/ranking"              class="dropdown-item" routerLinkActive="active" (click)="dropdownAbierto=false">🏆 Ranking</a>
+        </div>
       </div>
 
-      <button
-        class="scroll-btn"
-        [class.hidden]="atEnd"
-        (click)="scrollNav(160)"
-        aria-label="Siguiente">&#8250;</button>
-    </div>
+      <a routerLink="/informe-pdf" class="nav-link" routerLinkActive="active">Informe</a>
+    </nav>
 
-    <!-- Acciones derecha -->
     <div class="nav-actions">
       <ng-container *ngIf="!isLoggedIn">
         <a routerLink="/login"            class="btn-outline">Iniciar Sesión</a>
@@ -67,20 +56,19 @@
 
   </div>
 
-  <!-- Nav MÓVIL drawer -->
+  <!-- Nav MÓVIL -->
   <nav class="nav-mobile" *ngIf="isLoggedIn" [class.open]="menuAbierto">
     <button class="nav-close" (click)="toggleMenu()">✕</button>
     <a routerLink="/dashboard"            class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Dashboard</a>
     <a routerLink="/registro-impacto"     class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Registrar</a>
     <a routerLink="/objetivos"            class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Objetivos</a>
-    <a routerLink="/simulador-plan"       class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Plan</a>
+    <a routerLink="/simulador-plan"       class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Plan de acción</a>
     <a routerLink="/calculadora"          class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Calculadora</a>
     <a routerLink="/buscador-proveedores" class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Proveedores</a>
-    <a routerLink="/simulador-esg"        class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">🧪 Simulador</a>
+    <a routerLink="/simulador-esg"        class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Simulador ESG</a>
     <a routerLink="/informe-pdf"          class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Informe</a>
     <a routerLink="/comunidad"            class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">Comunidad</a>
     <a routerLink="/ranking"              class="nav-link" routerLinkActive="active" (click)="menuAbierto=false">🏆 Ranking</a>
   </nav>
-
   <div class="mobile-overlay" *ngIf="menuAbierto" (click)="toggleMenu()"></div>
 </header>

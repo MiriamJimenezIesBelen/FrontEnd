@@ -163,32 +163,54 @@ export class InformePdfComponent implements OnInit {
     const canvas = await html2canvas(elemento, {
       scale: 2,
       useCORS: true,
-      backgroundColor: '#ffffff'
+      backgroundColor: '#ffffff',
+      windowWidth: 900,
+      scrollY: 0
     });
 
     const imgData = canvas.toDataURL('image/png');
-    const pdf     = new jsPDF('p', 'mm', 'a4');
+    const pdf = new jsPDF('p', 'mm', 'a4');
 
-    const pdfAncho  = pdf.internal.pageSize.getWidth();
-    const pdfAlto   = pdf.internal.pageSize.getHeight();
-    const imgAncho  = canvas.width;
-    const imgAlto   = canvas.height;
+    const pageW = pdf.internal.pageSize.getWidth();   // 210mm
+    const pageH = pdf.internal.pageSize.getHeight();  // 297mm
+    const margin = 10;
+    const contentW = pageW - margin * 2;
 
-    const ratio     = pdfAncho / imgAncho;
-    const altoTotal = imgAlto * ratio;
+    const imgPxW = canvas.width;
+    const imgPxH = canvas.height;
 
-    if (altoTotal <= pdfAlto) {
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfAncho, altoTotal);
-    } else {
-      let posY = 0;
-      while (posY < altoTotal) {
-        pdf.addImage(imgData, 'PNG', 0, -posY, pdfAncho, altoTotal);
-        posY += pdfAlto;
-        if (posY < altoTotal) pdf.addPage();
-      }
+    // Relación mm/px
+    const ratio = contentW / imgPxW;
+    const totalContentH = imgPxH * ratio;
+
+    const pageContentH = pageH - margin * 2;
+    let offsetY = 0;
+    let page = 0;
+
+    while (offsetY < totalContentH) {
+      if (page > 0) pdf.addPage();
+
+      // Altura restante en esta página
+      const sliceH = Math.min(pageContentH, totalContentH - offsetY);
+
+      // Posición Y en píxeles dentro del canvas original
+      const srcY = (offsetY / ratio);
+      const srcH = sliceH / ratio;
+
+      // Crear canvas parcial
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width = imgPxW;
+      pageCanvas.height = Math.ceil(srcH);
+      const ctx = pageCanvas.getContext('2d')!;
+      ctx.drawImage(canvas, 0, srcY, imgPxW, srcH, 0, 0, imgPxW, Math.ceil(srcH));
+
+      const pageImgData = pageCanvas.toDataURL('image/png');
+      pdf.addImage(pageImgData, 'PNG', margin, margin, contentW, sliceH);
+
+      offsetY += pageContentH;
+      page++;
     }
 
-    const nombreArchivo = `informe-sostenibilidad-${this.nombreEmpresa.toLowerCase().replace(/\s/g, '-')}.pdf`;
-    pdf.save(nombreArchivo);
+    pdf.save(`informe-${this.nombreEmpresa.toLowerCase().replace(/\s/g, '-')}.pdf`);
   }
 }
