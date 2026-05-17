@@ -602,3 +602,50 @@
   text-align: left;
   font-weight: 700;
 }
+/* ══════════════════ MODAL CONFIRMAR ELIMINAR ══════════════════ */
+.modal-confirm {
+  max-width: 420px;
+  text-align: center;
+  padding: 40px 32px;
+}
+.modal-confirm-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.modal-confirm h3   { margin: 0 0 10px; font-size: 1.2rem; color: var(--text-main); }
+.modal-confirm p    { color: var(--text-muted); font-size: 0.92rem; margin: 0 0 28px; }
+.modal-confirm-btns { display: flex; gap: 12px; justify-content: center; }
+.btn-eliminar-confirm {
+  background: var(--red); color: white;
+  border: none; padding: 11px 28px;
+  border-radius: 9px; font-weight: 700;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+}
+.btn-eliminar-confirm:hover { background: #b71c1c; }
+
+/* ══════════════════ ACCIONES RESPONSIVE ══════════════════ */
+.acciones {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;  /* ← permite wrap en móvil */
+}
+
+@media (max-width: 768px) {
+  /* Ocultar texto en botones, dejar solo iconos */
+  .btn-editar   { font-size: 0; padding: 7px 10px; }
+  .btn-editar::before   { content: '✏'; font-size: 0.9rem; }
+  .btn-eliminar { font-size: 0; padding: 7px 10px; }
+  .btn-eliminar::before { content: '🗑'; font-size: 0.9rem; }
+
+  /* Ocultar columnas menos importantes */
+  .tabla-admin th:nth-child(2),
+  .tabla-admin td:nth-child(2),
+  .tabla-admin th:nth-child(3),
+  .tabla-admin td:nth-child(3) { display: none; }
+}
+
+@media (max-width: 480px) {
+  .tabla-admin th:nth-child(4),
+  .tabla-admin td:nth-child(4),
+  .tabla-admin th:nth-child(5),
+  .tabla-admin td:nth-child(5) { display: none; }
+}

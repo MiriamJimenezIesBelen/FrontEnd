@@ -331,19 +331,47 @@ export class AdminComponent implements OnInit {
   // ELIMINAR
   // ══════════════════════════════════════════════════════════════════════════
 
+  // ── Datos nuevos para el modal ─────────────────────────────────────────────
+  mostrarModalEliminar = false;
+  idAEliminar: number | null = null;
+  nombreAEliminar = '';
+
   eliminar(id: number) {
     const empresa = this.usuarios.find(u => u.idEmpresa === id);
-    if (!id || !confirm(`¿Eliminar "${empresa?.nombre}"? Esta acción no se puede deshacer.`)) return;
+    if (!id) return;
+    this.idAEliminar     = id;
+    this.nombreAEliminar = empresa?.nombre ?? '';
+    this.mostrarModalEliminar = true;
+  }
+
+  confirmarEliminar() {
+    if (!this.idAEliminar) return;
+    const id     = this.idAEliminar;
+    const nombre = this.nombreAEliminar;
+    this.mostrarModalEliminar = false;
+    this.idAEliminar = null;
+
     this.empresaService.deleteEmpresa(id).subscribe({
       next: () => {
         this.usuarios = this.usuarios.filter(u => u.idEmpresa !== id);
         this.aplicarFiltros();
         if (this.vistaActual === 'detalle') this.vistaActual = 'tabla';
-        this.registrarLog('🗑️', `Empresa "${empresa?.nombre}" eliminada`);
-        this.pushNotif('alerta', '🗑️', `"${empresa?.nombre}" eliminada`);
+        this.registrarLog('🗑️', `Empresa "${nombre}" eliminada`);
+        this.pushNotif('alerta', '🗑️', `"${nombre}" eliminada`);
       },
-      error: () => this.pushNotif('error', '❌', 'Error al eliminar la empresa'),
+      error: (err) => {
+        console.error('Error al eliminar:', err);
+        console.error('Status:', err.status);
+        console.error('Message:', err.message);
+        console.error('Error body:', err.error);
+        this.pushNotif('error', '❌', `Error ${err.status} al eliminar "${nombre}"`);
+      },
     });
+  }
+
+  cancelarEliminar() {
+    this.mostrarModalEliminar = false;
+    this.idAEliminar = null;
   }
 
   // ══════════════════════════════════════════════════════════════════════════

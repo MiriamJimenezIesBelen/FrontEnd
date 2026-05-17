@@ -43,7 +43,13 @@ export class EmpresaService {
   }
 
   deleteEmpresa(id: number): Observable<any> {
-    return this.http.delete(`${this.url}/${id}`, { headers: this.getHeaders() });
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+    // Usa POST en lugar de DELETE para evitar bloqueos de proxy
+    return this.http.post(`${this.url}/${id}/eliminar`, {}, { headers });
   }
 
   getPlantasByEmpresa(id: number): Observable<any[]> {

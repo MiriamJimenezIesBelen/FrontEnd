@@ -1,4 +1,16 @@
 <div class="admin-page">
+  <!-- MODAL ELIMINAR -->
+  <div class="modal-overlay" *ngIf="mostrarModalEliminar" (click)="cancelarEliminar()">
+    <div class="modal-card modal-confirm" (click)="$event.stopPropagation()">
+      <div class="modal-confirm-icon">🗑️</div>
+      <h3>¿Eliminar empresa?</h3>
+      <p>Vas a eliminar <strong>{{ nombreAEliminar }}</strong>. Esta acción no se puede deshacer.</p>
+      <div class="modal-confirm-btns">
+        <button class="btn-cancelar" (click)="cancelarEliminar()">Cancelar</button>
+        <button class="btn-eliminar-confirm" (click)="confirmarEliminar()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- NOTIFICACIONES BANNER -->
   <div class="notif-banner" *ngIf="notificaciones.length > 0">
