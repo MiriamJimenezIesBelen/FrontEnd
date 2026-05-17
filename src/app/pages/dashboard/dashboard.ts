@@ -105,7 +105,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-
     const hora = new Date().getHours();
     if (hora < 13) {
       this.saludo = 'Buenos días';
@@ -151,8 +150,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.cargando = false;
 
           if (data && data.length > 0) {
-
-            // IMPORTANTE: guardamos la fecha para poder borrar en BD
             this.impactos = data.map((m: any) => ({
               fecha:    m.fecha,
               energia:  parseFloat(m.energia)  || 0,
@@ -167,15 +164,22 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             this.refrescarGraficos();
 
           } else {
-            if (this.impactos.length === 0) {
-              this.sinDatos = true;
-            }
+            this.sinDatos = true; // ← sin datos del backend
+            this.cdr.detectChanges();
           }
         },
         error: () => {
           this.cargando = false;
+          this.sinDatos = true; // ← error = mostramos sin datos
+          this.cdr.detectChanges();
         }
       });
+
+    } else {
+      // ← NUEVO: sin idEmpresa, mostramos sin datos directamente
+      this.cargando = false;
+      this.sinDatos = true;
+      this.cdr.detectChanges();
     }
   }
 

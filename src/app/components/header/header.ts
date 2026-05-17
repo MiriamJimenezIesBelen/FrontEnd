@@ -26,12 +26,13 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.checkLogin();
     window.addEventListener('storage', () => this.checkLogin());
+
+    // ← AÑADE ESTO: fuerza recheck en cada navegación
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
         this.checkLogin();
         this.menuAbierto = false;
-        setTimeout(() => this.updateScrollState(), 50);
       });
   }
 

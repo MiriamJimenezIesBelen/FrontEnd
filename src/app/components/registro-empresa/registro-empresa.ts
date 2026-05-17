@@ -39,22 +39,30 @@ export class RegistroEmpresaComponent {
     if (this.guardando) return;
     this.guardando = true;
 
+    const password = this.nuevaEmpresa.password ?? '';  // ← aquí
+
     this.empresaService.saveEmpresa(this.nuevaEmpresa).subscribe({
       next: (data) => {
-        // ── Guardar en localStorage con los campos que necesita el dashboard ──
-        // El backend devuelve el objeto Empresa guardado; nos aseguramos
-        // de que idEmpresa esté presente para el storageKey del dashboard.
-        localStorage.setItem('usuario', JSON.stringify({
-          idEmpresa: data.idEmpresa ?? data.id,   // según cómo lo llame tu backend
-          nombre:    data.nombre,
-          sector:    data.sector,
-          rol:       data.rol ?? 'USER'
-        }));
+        this.empresaService.login(this.nuevaEmpresa.correoContacto, password).subscribe({
+          next: (loginData) => {
+            localStorage.setItem('token', loginData.token);
+            localStorage.setItem('usuario', JSON.stringify({
+              idEmpresa: loginData.idEmpresa ?? data.idEmpresa,
+              nombre:    loginData.nombre    ?? data.nombre,
+              sector:    loginData.sector    ?? data.sector,
+              rol:       loginData.rol       ?? 'USER'
+            }));
 
-        this.guardando = false;
-        this.mostrarToast(`✅ ¡Empresa "${this.nuevaEmpresa.nombre}" creada con éxito!`, 'success');
-
-        setTimeout(() => this.router.navigate(['/dashboard']), 2000);
+            this.guardando = false;
+            this.mostrarToast(`✅ ¡Empresa "${this.nuevaEmpresa.nombre}" creada con éxito!`, 'success');
+            setTimeout(() => this.router.navigate(['/dashboard']), 2000);
+          },
+          error: () => {
+            this.guardando = false;
+            this.mostrarToast('✅ Cuenta creada. Inicia sesión.', 'success');
+            setTimeout(() => this.router.navigate(['/login']), 2000);
+          }
+        });
       },
       error: (err) => {
         console.error('Error al guardar la empresa:', err);
