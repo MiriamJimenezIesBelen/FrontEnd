@@ -20,6 +20,8 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   dropdownAbierto = false;  // controla si el dropdown de Herramientas está abierto
   dropdownActivo  = false;  // true si alguna ruta del dropdown está activa (para resaltar el botón)
 
+  esAdmin = false;
+
   // Referencia al elemento de scroll del nav, por si en el futuro
   // se necesita controlar el scroll horizontal de la barra de navegación
   @ViewChild('navScroll') navScrollRef!: ElementRef<HTMLElement>;
@@ -29,6 +31,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     // Comprobamos si hay sesión al cargar el header por primera vez
     this.checkLogin();
+    this.esAdmin = window.location.href.includes('/admin');
 
     // Si en otra pestaña del navegador se hace login o logout,
     // el evento 'storage' lo detecta y actualiza el header automáticamente
@@ -38,9 +41,10 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     // la sesión y cerramos el menú móvil si estaba abierto
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe(() => {
+      .subscribe((e: any) => {
         this.checkLogin();
         this.menuAbierto = false;
+        this.esAdmin = e.url.includes('/admin');
       });
   }
 
