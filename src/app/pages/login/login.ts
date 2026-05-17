@@ -14,47 +14,90 @@ import { CommonModule } from '@angular/common';
 })
 export class LoginComponent implements OnInit {
 
+  // Datos introducidos en el formulario
   correo = '';
   password = '';
-  error = false;
-  cargando = false; // NUEVO
 
-  constructor(private router: Router,
-              private empresaService: EmpresaService,
-              private auth: AuthService) {}
+  // Controla mensaje de error en login
+  error = false;
+
+  // Controla spinner de carga
+  cargando = false;
+
+  // Inyectamos router para navegar entre páginas
+  // empresaService para hacer login
+  // auth para comprobar sesión
+  constructor(
+    private router: Router,
+    private empresaService: EmpresaService,
+    private auth: AuthService
+  ) {}
 
   ngOnInit() {
+
+    // Si ya hay sesión iniciada
+    // redirigimos directamente al dashboard
     if (this.auth.isLogged()) {
       this.router.navigate(['/dashboard']);
     }
   }
 
   login() {
+
+    // Reiniciamos posibles errores anteriores
     this.error = false;
-    this.cargando = true; // NUEVO: activar spinner al pulsar
 
-    this.empresaService.login(this.correo, this.password).subscribe({
-      next: (response) => {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('usuario', JSON.stringify({
-          idEmpresa: response.idEmpresa,
-          nombre:    response.nombre,
-          sector:    response.sector,
-          rol:       response.rol
-        }));
+    // Activamos spinner mientras carga
+    this.cargando = true;
 
-        window.dispatchEvent(new Event('storage'));
+    // Llamada al backend para iniciar sesión
+    this.empresaService
+      .login(this.correo, this.password)
+      .subscribe({
 
-        if (response.rol === 'ADMIN') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/dashboard']);
+        // Si login va bien
+        next: (response) => {
+
+          // Guardamos token JWT
+          localStorage.setItem('token', response.token);
+
+          // Guardamos datos básicos del usuario
+          localStorage.setItem(
+            'usuario',
+            JSON.stringify({
+
+              idEmpresa: response.idEmpresa,
+              nombre: response.nombre,
+              sector: response.sector,
+              rol: response.rol
+            })
+          );
+
+          // Lanzamos evento storage manualmente
+          // para actualizar navbar u otros componentes
+          window.dispatchEvent(new Event('storage'));
+
+          // Si es admin va al panel admin
+          if (response.rol === 'ADMIN') {
+
+            this.router.navigate(['/admin']);
+
+          } else {
+
+            // Si no es admin va al dashboard normal
+            this.router.navigate(['/dashboard']);
+          }
+        },
+
+        // Si el login falla
+        error: () => {
+
+          // Quitamos spinner
+          this.cargando = false;
+
+          // Activamos mensaje de error
+          this.error = true;
         }
-      },
-      error: () => {
-        this.cargando = false; // NUEVO: apagar spinner si hay error
-        this.error = true;
-      }
-    });
+      });
   }
 }

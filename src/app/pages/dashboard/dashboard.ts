@@ -25,6 +25,7 @@ import { RankingService } from '../../services/ranking.service';
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
 
+  // Clave dinámica para sessionStorage, se personaliza por empresa en ngOnInit
   private storageKey = 'impactos';
   private idEmpresa: number | null = null;
 
@@ -46,6 +47,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   totalCo2 = 0;
   totalResiduos = 0;
 
+  // Clase CSS del badge (badge-verde/amarillo/rojo) para cada KPI
   badgeEnergia = '';
   badgeAgua = '';
   badgeCo2 = '';
@@ -56,15 +58,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   textoCo2 = '';
   textoResiduos = '';
 
+  // Porcentaje (0-100) para la barra de progreso de cada KPI
   barEnergia = 0;
   barAgua = 0;
   barCo2 = 0;
   barResiduos = 0;
 
-  trendEnergia = { texto: '', clase: 'trend-neutro' };
-  trendAgua    = { texto: '', clase: 'trend-neutro' };
-  trendCo2     = { texto: '', clase: 'trend-neutro' };
-  trendResiduos= { texto: '', clase: 'trend-neutro' };
+  // Comparativa con el registro anterior (texto + clase CSS de color)
+  trendEnergia  = { texto: '', clase: 'trend-neutro' };
+  trendAgua     = { texto: '', clase: 'trend-neutro' };
+  trendCo2      = { texto: '', clase: 'trend-neutro' };
+  trendResiduos = { texto: '', clase: 'trend-neutro' };
 
   indicePorcentaje = 0;
   indiceClase = '';
@@ -74,6 +78,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   promedioAgua = 0;
   promedioCo2 = 0;
 
+  // Variación % entre el primer y último registro
   reduccionEnergia = 0;
   reduccionCo2 = 0;
 
@@ -87,6 +92,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   insights: string[] = [];
 
+  // Referencias a los canvas de los gráficos para poder crearlos/destruirlos
   @ViewChild('graficoLineas', { static: false })
   graficoLineasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -105,6 +111,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    // Saludo según la hora del día
     const hora = new Date().getHours();
     if (hora < 13) {
       this.saludo = 'Buenos días';
@@ -120,16 +127,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       month: 'long'
     });
 
+    // Leemos los datos del usuario logueado y construimos la clave de sessionStorage
     const usuarioData = localStorage.getItem('usuario');
     if (usuarioData) {
       const u = JSON.parse(usuarioData);
       this.nombreEmpresa = u.nombre || 'Empresa';
       this.sectorEmpresa = u.sector || '';
-      this.idEmpresa = u.idEmpresa ?? null;
-      this.storageKey = `impactos_empresa_${u.idEmpresa ?? u.nombre}`;
+      this.idEmpresa     = u.idEmpresa ?? null;
+      this.storageKey    = `impactos_empresa_${u.idEmpresa ?? u.nombre}`;
     }
 
-    // CARGAR CACHE
+    // Cargamos primero desde caché para mostrar datos inmediatamente sin esperar al backend
     const cached = sessionStorage.getItem(this.storageKey);
     if (cached) {
       this.impactos = JSON.parse(cached);
@@ -139,8 +147,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     }
 
-    // CARGAR BACKEND
     if (this.idEmpresa) {
+      // Solo mostramos spinner si no había caché previa
       if (!cached || this.impactos.length === 0) {
         this.cargando = true;
       }
@@ -150,6 +158,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.cargando = false;
 
           if (data && data.length > 0) {
+            // Normalizamos los datos del backend al mismo formato que usamos internamente
             this.impactos = data.map((m: any) => ({
               fecha:    m.fecha,
               energia:  parseFloat(m.energia)  || 0,
@@ -164,19 +173,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             this.refrescarGraficos();
 
           } else {
-            this.sinDatos = true; // ← sin datos del backend
+            this.sinDatos = true;
             this.cdr.detectChanges();
           }
         },
         error: () => {
           this.cargando = false;
-          this.sinDatos = true; // ← error = mostramos sin datos
+          this.sinDatos = true;
           this.cdr.detectChanges();
         }
       });
 
     } else {
-      // ← NUEVO: sin idEmpresa, mostramos sin datos directamente
+      // Sin idEmpresa no podemos pedir datos al backend, mostramos estado vacío
       this.cargando = false;
       this.sinDatos = true;
       this.cdr.detectChanges();
@@ -184,11 +193,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // Si ya había datos en caché, creamos los gráficos una vez el HTML esté listo
     if (this.impactos.length > 0) {
       this.refrescarGraficos();
     }
   }
 
+  // Fuerza la detección de cambios y espera al siguiente frame para crear los gráficos
+  // así garantizamos que el canvas ya está en el DOM cuando Chart.js intenta accederlo
   private refrescarGraficos() {
     this.cdr.detectChanges();
     requestAnimationFrame(() => {
@@ -197,6 +209,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Llama a todos los cálculos en orden; se ejecuta cada vez que cambian los datos
   private recalcularTodo() {
     this.calcularKPIs();
     this.calcularTrends();
@@ -209,6 +222,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     if (this.totalAgua > 20000)   this.insights.push('💧 Alto consumo de agua detectado');
   }
 
+  // Calcula totales, promedios, badges y barras de progreso de los 4 indicadores
+  // Los badges se basan en el promedio por registro, no en el total acumulado
   calcularKPIs() {
     const n = this.impactos.length;
 
@@ -224,7 +239,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const avgC = this.totalCo2 / n;
     const avgR = this.totalResiduos / n;
 
-    // 🔥 BADGES (AHORA BASADO EN PROMEDIO, NO TOTAL)
     this.badgeEnergia  = this.calcBadge(avgE, 1500);
     this.badgeAgua     = this.calcBadge(avgA, 6000);
     this.badgeCo2      = this.calcBadge(avgC, 700);
@@ -235,14 +249,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.textoCo2      = this.textoEstado(this.badgeCo2);
     this.textoResiduos = this.textoEstado(this.badgeResiduos);
 
-    // 📊 BARRAS (CORRECTAS)
+    // Math.min(100) para que la barra nunca supere el 100% visualmente
     this.barEnergia  = Math.min(100, Math.round((avgE / 1500) * 100));
     this.barAgua     = Math.min(100, Math.round((avgA / 6000) * 100));
-    this.barCo2      = Math.min(100, Math.round((avgC / 700) * 100));
-    this.barResiduos = Math.min(100, Math.round((avgR / 400) * 100));
+    this.barCo2      = Math.min(100, Math.round((avgC / 700)  * 100));
+    this.barResiduos = Math.min(100, Math.round((avgR / 400)  * 100));
   }
 
-
+  // Compara el último registro con el anterior para mostrar la flecha de tendencia
   calcularTrends() {
     if (this.impactos.length < 2) return;
     const last = this.impactos.at(-1)!;
@@ -253,6 +267,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.trendResiduos = this.trend(last.residuos, prev.residuos, true);
   }
 
+  // Calcula el % de cambio entre dos valores y devuelve texto y clase CSS
+  // lowerIsBetter=true significa que bajar es bueno (energía, CO₂, etc.)
   trend(actual: number, anterior: number, lowerIsBetter: boolean) {
     if (!anterior || anterior === 0) return { texto: 'Sin comparativa', clase: 'trend-neutro' };
     const diff = actual - anterior;
@@ -266,6 +282,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     };
   }
 
+  // Calcula promedios y la variación % entre el primer y último registro
   calcularEstadisticas() {
     const n = this.impactos.length;
     this.promedioEnergia = this.totalEnergia / n;
@@ -284,6 +301,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Calcula el índice de sostenibilidad (0-100) sumando puntos por badge
+  // verde=100, amarillo=50, rojo=10 → promedio de los 4 indicadores
   calcularIndice() {
     const badges = [this.badgeEnergia, this.badgeAgua, this.badgeCo2, this.badgeResiduos];
     const pts = badges.reduce((s, b) => s + (b === 'badge-verde' ? 100 : b === 'badge-amarillo' ? 50 : 10), 0);
@@ -301,35 +320,35 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Calcula puntos, medallas y nivel ESG, y actualiza el ranking local y del backend
   calcularGamificacion() {
-    this.puntos = this.gamificacionService.calcularPuntos(this.impactos);
+    this.puntos   = this.gamificacionService.calcularPuntos(this.impactos);
     this.medallas = this.gamificacionService.obtenerMedallas(this.puntos, this.impactos);
-    this.nivel = this.gamificacionService.calcularNivel(this.puntos);
+    this.nivel    = this.gamificacionService.calcularNivel(this.puntos);
 
-    // 🔥 AQUÍ ES DONDE SE GUARDA EL RANKING
     this.guardarRanking();
 
     if (this.nivel === 'Oro') {
-      this.nivelIcono = '🥇';
-      this.puntosNivelActual = 600;
+      this.nivelIcono          = '🥇';
+      this.puntosNivelActual   = 600;
       this.puntosNivelSiguiente = 600;
-      this.progresoNivel = 100;
+      this.progresoNivel       = 100;
 
     } else if (this.nivel === 'Plata') {
-      this.nivelIcono = '🥈';
-      this.puntosNivelActual = 300;
+      this.nivelIcono          = '🥈';
+      this.puntosNivelActual   = 300;
       this.puntosNivelSiguiente = 600;
-      this.progresoNivel =
-        Math.min(100, Math.max(0, Math.round(((this.puntos - 300) / 300) * 100)));
+      this.progresoNivel = Math.min(100, Math.max(0, Math.round(((this.puntos - 300) / 300) * 100)));
 
     } else {
-      this.nivelIcono = '🥉';
-      this.puntosNivelActual = 0;
+      this.nivelIcono          = '🥉';
+      this.puntosNivelActual   = 0;
       this.puntosNivelSiguiente = 300;
-      this.progresoNivel =
-        Math.min(100, Math.max(0, Math.round((this.puntos / 300) * 100)));
+      this.progresoNivel = Math.min(100, Math.max(0, Math.round((this.puntos / 300) * 100)));
     }
   }
+
+  // Verde si está 20% bajo la referencia, amarillo si la cumple, rojo si la supera
   calcBadge(valor: number, ref: number): string {
     if (valor <= ref * 0.8) return 'badge-verde';
     if (valor <= ref)       return 'badge-amarillo';
@@ -342,6 +361,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return '🔴 Alto';
   }
 
+  // Añade un insight comparando el último y penúltimo registro de energía
   compararUltimos() {
     if (this.impactos.length < 2) return;
     const u = this.impactos.at(-1)!;
@@ -355,11 +375,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   pedirConfirmacion(index: number) {
     this.indiceAEliminar = index;
-    this.mostrarModal = true;
+    this.mostrarModal    = true;
   }
 
   cancelarEliminar() {
-    this.mostrarModal = false;
+    this.mostrarModal    = false;
     this.indiceAEliminar = null;
   }
 
@@ -368,7 +388,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     const impacto = this.impactos[this.indiceAEliminar];
 
-    // BORRAR EN BD si hay fecha e idEmpresa
+    // Borramos en BD si tenemos fecha e id (el borrado local ocurre siempre)
     if (this.idEmpresa && impacto.fecha) {
       this.empresaService.eliminarMedicionPorFecha(
         this.idEmpresa,
@@ -379,29 +399,31 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       });
     }
 
-    // BORRAR EN LOCAL siempre
     this.impactos.splice(this.indiceAEliminar, 1);
     sessionStorage.setItem(this.storageKey, JSON.stringify(this.impactos));
 
-    this.mostrarModal = false;
+    this.mostrarModal    = false;
     this.indiceAEliminar = null;
 
     if (this.impactos.length === 0) {
+      // Si no quedan registros, destruimos los gráficos y mostramos estado vacío
       this.sinDatos = true;
       this.graficoLineas?.destroy();
       this.graficoLineas = undefined;
       this.graficoDona?.destroy();
-      this.graficoDona = undefined;
+      this.graficoDona  = undefined;
     } else {
       this.recalcularTodo();
       this.refrescarGraficos();
     }
   }
 
+  // Alias público para abrir el modal de confirmación desde el HTML
   eliminarImpacto(index: number) {
     this.pedirConfirmacion(index);
   }
 
+  // Crea el gráfico de líneas de energía y agua; si ya existía lo destruye primero
   crearGraficoLineas() {
     if (!this.graficoLineasRef?.nativeElement) return;
     this.graficoLineas?.destroy();
@@ -436,6 +458,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Crea el gráfico donut con la distribución de los 4 indicadores
   crearGraficoDona() {
     if (!this.graficoDonaRef?.nativeElement) return;
     this.graficoDona?.destroy();
@@ -456,21 +479,22 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Genera y descarga un CSV con los datos de impacto del historial
   exportarCSV() {
     let csv = 'energia,agua,co2,residuos\n';
     this.impactos.forEach(i => {
       csv += `${i.energia},${i.agua},${i.co2},${i.residuos}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = window.URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = window.URL.createObjectURL(blob);
     a.download = `impactos_${this.nombreEmpresa}.csv`;
     a.click();
   }
 
+  // Guarda la puntuación en localStorage (ranking local) y en el backend
   private guardarRanking() {
     if (!this.nombreEmpresa) return;
-
     this.rankingService.guardarPuntuacion(this.nombreEmpresa, this.puntos);
     this.rankingService.guardarPuntuacionBackend(this.nombreEmpresa, this.puntos)
       .subscribe({

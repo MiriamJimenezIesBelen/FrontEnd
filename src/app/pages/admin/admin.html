@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <!-- NOTIFICACIONES BANNER -->
+  <!-- NOTIFICACIONES -->
   <div class="notif-banner" *ngIf="notificaciones.length > 0">
     <div class="notif-item" *ngFor="let n of notificaciones" [ngClass]="'notif-' + n.tipo">
       <span class="notif-icon">{{ n.icono }}</span>
@@ -213,7 +213,7 @@
     </div>
   </div>
 
-  <!-- ══════════════ VISTA DETALLE ══════════════ -->
+  <!-- VISTA DETALLE-->
   <div class="detalle-card" *ngIf="vistaActual === 'detalle' && empresaDetalle">
     <div class="detalle-topbar">
       <button class="btn-back" (click)="volverTabla()">← Volver</button>
@@ -278,7 +278,7 @@
     </div>
   </div>
 
-  <!-- ══════════════ MODAL CREAR ══════════════ -->
+  <!-- MODAL CREAR -->
   <div class="modal-overlay" *ngIf="vistaActual === 'crear'" (click)="cerrarCrear()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
@@ -318,7 +318,7 @@
     </div>
   </div>
 
-  <!-- ══════════════ FORMULARIO EDITAR ══════════════ -->
+  <!-- FORMULARIO EDITAR -->
   <div class="editar-card" *ngIf="vistaActual === 'editar'">
     <div class="editar-header">
       <button class="btn-back" (click)="cancelarEdicion()">← Volver</button>

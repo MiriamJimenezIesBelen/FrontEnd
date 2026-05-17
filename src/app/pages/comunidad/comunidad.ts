@@ -18,12 +18,14 @@ export class ComunidadComponent implements OnInit {
   filtroTipo: string = '';
   nombreEmpresa: string = '';
 
+  // Tipos de post disponibles con su emoji y etiqueta para el selector
   tipos = [
     { valor: 'idea',     emoji: '💡', label: 'Idea'     },
     { valor: 'pregunta', emoji: '❓', label: 'Pregunta' },
     { valor: 'logro',    emoji: '🏆', label: 'Logro'    }
   ];
 
+  // Preguntas frecuentes con estado open para controlar si están expandidas
   faqs = [
     {
       pregunta: '¿Cómo calculo mi huella de carbono?',
@@ -55,23 +57,26 @@ export class ComunidadComponent implements OnInit {
   constructor(private comunidadService: ComunidadService) {}
 
   ngOnInit() {
+    // Leemos el nombre de la empresa del localStorage para mostrarlo como autor en los posts
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
     this.nombreEmpresa = usuario.nombre || 'Empresa';
     this.cargarPosts();
   }
 
+  // Carga los posts guardados en localStorage
+  // ?? false garantiza que showComments tenga valor aunque sea un post antiguo sin ese campo
   cargarPosts() {
     const data = localStorage.getItem('posts');
     const raw = data ? JSON.parse(data) : [];
-    // Aseguramos que cada post tenga showComments
     this.posts = raw.map((p: any) => ({ ...p, showComments: p.showComments ?? false }));
   }
 
+  // Crea un nuevo post y lo añade al principio de la lista (más reciente primero)
   publicar() {
     if (!this.nuevoPost.trim()) return;
 
     const post = {
-      id: Date.now(),
+      id: Date.now(), // usamos timestamp como id único
       autor: this.nombreEmpresa,
       texto: this.nuevoPost,
       tipo: this.nuevoTipo,
@@ -91,6 +96,7 @@ export class ComunidadComponent implements OnInit {
     this.guardar();
   }
 
+  // Añade un comentario al post si el texto no está vacío
   comentar(post: any, texto: string) {
     if (!texto.trim()) return;
     post.comentarios.push({
@@ -101,30 +107,37 @@ export class ComunidadComponent implements OnInit {
     this.guardar();
   }
 
+  // Elimina un post filtrando por id y persiste los cambios
   eliminar(post: any) {
     this.posts = this.posts.filter(p => p.id !== post.id);
     this.guardar();
   }
 
+  // Persiste el estado actual de los posts en localStorage
   guardar() {
     localStorage.setItem('posts', JSON.stringify(this.posts));
   }
 
+  // Devuelve el emoji y label de un tipo de post dado su valor
   tipoLabel(tipo: string): string {
     const t = this.tipos.find(x => x.valor === tipo);
     return t ? `${t.emoji} ${t.label}` : tipo;
   }
 
+  // Si no hay filtro activo devuelve todos los posts, si no filtra por tipo
   get postsFiltrados() {
     if (!this.filtroTipo) return this.posts;
     return this.posts.filter(p => p.tipo === this.filtroTipo);
   }
 
+  // Posts con 3 o más likes, ordenados de mayor a menor para la sección de destacados
   get postsDestacados() {
     return this.posts.filter(p => p.likes >= 3).sort((a, b) => b.likes - a.likes);
   }
 
+  // Total de likes de toda la comunidad para mostrar en el contador global
   get totalLikes() {
     return this.posts.reduce((sum, p) => sum + p.likes, 0);
   }
 }
+

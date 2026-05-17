@@ -13,10 +13,12 @@ import { Chart } from 'chart.js/auto';
 })
 export class CalculadoraComponent implements OnInit {
 
+  // Número de registros cargados, usado como divisor para calcular eficiencia por unidad
   get unidades() {
     return this.impactos.length;
   }
 
+  // Getter auxiliar para mostrar energía en el HTML con valor por defecto 0
   get energiaFormateada(): number {
     return this.eficienciaEnergia ?? 0;
   }
@@ -25,21 +27,20 @@ export class CalculadoraComponent implements OnInit {
   calculado: boolean = false;
   sinDatos: boolean = false;
 
+  // Datos de impacto cargados desde sessionStorage
   impactos: any[] = [];
 
-  // Resultados
   eficienciaEnergia:  number = 0;
   eficienciaAgua:     number = 0;
   eficienciaCo2:      number = 0;
   eficienciaResiduos: number = 0;
 
-  // Semáforos
+  // Clase CSS del semáforo (sem-verde/amarillo/rojo) y texto descriptivo para cada indicador
   semEnergia = '';  textoSemEnergia = '';
   semAgua    = '';  textoSemAgua    = '';
   semCo2     = '';  textoSemCo2     = '';
   semResiduos= '';  textoSemResiduos= '';
 
-  // Conclusión general
   nivelGeneral:       string = '';
   mensajeGeneral:     string = '';
   descripcionGeneral: string = '';
@@ -49,16 +50,18 @@ export class CalculadoraComponent implements OnInit {
   unidadMedida: string = 'unidades';
   tipoActividad: string = 'manufactura';
 
+  // Valores de referencia por unidad producida (benchmarks del sector)
   readonly REF_ENERGIA  = 0.25;
   readonly REF_AGUA     = 1.0;
   readonly REF_CO2      = 0.1;
   readonly REF_RESIDUOS = 0.05;
 
   ngOnInit() {
+    // Inicializamos el mes al actual en formato YYYY-MM para el input type="month"
     const hoy = new Date();
     this.mes = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
 
-    // Obtener clave aislada por empresa (igual que en registro-impacto y dashboard)
+    // Cargamos los impactos del sessionStorage usando la clave específica de esta empresa
     const storageKey = this.getStorageKey();
     const data = sessionStorage.getItem(storageKey);
     if (data) {
@@ -69,6 +72,8 @@ export class CalculadoraComponent implements OnInit {
     }
   }
 
+  // Construye la clave de sessionStorage específica para esta empresa
+  // Si no hay usuario logueado, usa la clave genérica 'impactos'
   private getStorageKey(): string {
     try {
       const u = JSON.parse(localStorage.getItem('usuario') || '{}');
@@ -79,6 +84,8 @@ export class CalculadoraComponent implements OnInit {
     }
   }
 
+  // Calcula la eficiencia dividiendo los totales entre el número de registros
+  // Aplica un factor de corrección según la unidad de medida seleccionada
   calcular() {
     if (!this.unidades || this.unidades <= 0 || !this.impactos.length) return;
 
@@ -87,19 +94,21 @@ export class CalculadoraComponent implements OnInit {
     const totalCo2      = this.impactos.reduce((suma, item) => suma + (item.co2      || 0), 0);
     const totalResiduos = this.impactos.reduce((suma, item) => suma + (item.residuos || 0), 0);
 
+    // Factor de ajuste según la unidad: euros produce menos consumo, toneladas más
     const factorUnidad =
-      this.unidadMedida === 'euros' ? 0.8 :
+      this.unidadMedida === 'euros'     ? 0.8 :
         this.unidadMedida === 'toneladas' ? 1.2 :
-          this.unidadMedida === 'pedidos' ? 1.1 :
+          this.unidadMedida === 'pedidos'   ? 1.1 :
             1;
 
     const unidades = this.impactos.length || 1;
 
-    this.eficienciaEnergia  = (totalEnergia / unidades) * factorUnidad;
-    this.eficienciaAgua     = (totalAgua / unidades) * factorUnidad;
-    this.eficienciaCo2      = (totalCo2 / unidades) * factorUnidad;
+    this.eficienciaEnergia  = (totalEnergia  / unidades) * factorUnidad;
+    this.eficienciaAgua     = (totalAgua     / unidades) * factorUnidad;
+    this.eficienciaCo2      = (totalCo2      / unidades) * factorUnidad;
     this.eficienciaResiduos = (totalResiduos / unidades) * factorUnidad;
 
+    // Calculamos el semáforo comparando cada eficiencia con su referencia
     this.semEnergia  = this.calcSemaforo(this.eficienciaEnergia,  this.REF_ENERGIA);
     this.semAgua     = this.calcSemaforo(this.eficienciaAgua,     this.REF_AGUA);
     this.semCo2      = this.calcSemaforo(this.eficienciaCo2,      this.REF_CO2);
@@ -112,12 +121,14 @@ export class CalculadoraComponent implements OnInit {
 
     this.calcularConclusionGeneral();
     this.calculado = true;
+    // Esperamos 100ms para que Angular renderice el canvas antes de crear el gráfico
     setTimeout(() => this.crearGrafico(), 100);
   }
 
+  // Verde si está 20% por debajo de la referencia, amarillo si la cumple, rojo si la supera
   calcSemaforo(valor: number, referencia: number): string {
     if (valor <= referencia * 0.8) return 'sem-verde';
-    if (valor <= referencia) return 'sem-amarillo';
+    if (valor <= referencia)       return 'sem-amarillo';
     return 'sem-rojo';
   }
 
@@ -127,8 +138,9 @@ export class CalculadoraComponent implements OnInit {
     return '🔴 Por encima';
   }
 
+  // Determina el nivel general según cuántos indicadores están en rojo o amarillo
   calcularConclusionGeneral() {
-    const sems = [this.semEnergia, this.semAgua, this.semCo2, this.semResiduos];
+    const sems      = [this.semEnergia, this.semAgua, this.semCo2, this.semResiduos];
     const rojos     = sems.filter(s => s === 'sem-rojo').length;
     const amarillos = sems.filter(s => s === 'sem-amarillo').length;
 
@@ -147,6 +159,8 @@ export class CalculadoraComponent implements OnInit {
     }
   }
 
+  // Crea el gráfico de barras con la eficiencia por registro
+  // Si ya existía un gráfico anterior lo destruye para evitar duplicados
   crearGrafico() {
     if (this.grafico) this.grafico.destroy();
 

@@ -12,12 +12,16 @@ import { RouterLink } from '@angular/router';
 })
 export class BuscadorProveedoresComponent implements OnInit {
 
+  // Valores de los filtros activos (vacío = sin filtro)
   filtroTipo: string = '';
   filtroSector: string = '';
   filtroUbicacion: string = '';
   textoBusqueda: string = '';
 
+  // Lista que se muestra en pantalla (cambia al filtrar)
   proveedoresFiltrados: any[] = [];
+
+  // Base de datos estática de proveedores sostenibles
   todosProveedores: any[] = [
     {
       nombre: 'Acciona',
@@ -190,9 +194,13 @@ export class BuscadorProveedoresComponent implements OnInit {
   ];
 
   ngOnInit() {
+    // Cargamos todos los proveedores al entrar (sin filtros activos)
     this.filtrar();
   }
 
+  // Filtra la lista según los criterios activos
+  // Si un filtro está vacío, no se aplica (muestra todos para ese campo)
+  // El texto busca en nombre, descripción y tags a la vez
   filtrar() {
     this.proveedoresFiltrados = this.todosProveedores.filter(p => {
       const okTipo      = !this.filtroTipo      || p.tipo === this.filtroTipo;
@@ -206,6 +214,7 @@ export class BuscadorProveedoresComponent implements OnInit {
     });
   }
 
+  // Resetea todos los filtros y vuelve a mostrar todos los proveedores
   limpiarFiltros() {
     this.filtroTipo = '';
     this.filtroSector = '';
@@ -214,10 +223,13 @@ export class BuscadorProveedoresComponent implements OnInit {
     this.filtrar();
   }
 
+  // Abre el sitio web del proveedor en una pestaña nueva
   abrirWeb(url: string) {
     if (url) window.open(url, '_blank');
   }
 
+  // Función de tracking para *ngFor: usa el nombre como identificador único
+  // Evita que Angular redibuje tarjetas que no han cambiado al filtrar
   trackByNombre(index: number, item: any): string {
     return item.nombre;
   }
