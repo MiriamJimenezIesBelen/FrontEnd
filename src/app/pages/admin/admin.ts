@@ -272,8 +272,12 @@ export class AdminComponent implements OnInit {
       this.pushNotif('alerta', '⚠️', 'Rellena todos los campos obligatorios');
       return;
     }
+
+    console.log('📤 Enviando:', this.nuevaEmpresa); // ← añade esto
+
     this.empresaService.createEmpresa(this.nuevaEmpresa).subscribe({
       next: (creada: any) => {
+        console.log('✅ Respuesta:', creada); // ← y esto
         this.usuarios.push(creada);
         this.aplicarFiltros();
         this.mensajeExito = true;
@@ -285,7 +289,8 @@ export class AdminComponent implements OnInit {
           this.vistaActual  = 'tabla';
         }, 1800);
       },
-      error: () => {
+      error: (err) => {
+        console.error('❌ Error:', err); // ← y esto
         this.mensajeError = true;
         this.pushNotif('error', '❌', 'Error al crear la empresa');
       },
